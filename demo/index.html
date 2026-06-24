@@ -166,7 +166,49 @@
       background: #F3F4F6;
       transform: scale(0.98);
     }
-    .chat-input-wrapper {
+    .ai-cart-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+      color: #451A03;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+      border: none;
+    }
+    .ai-cart-btn:active { transform: scale(0.98); }
+    .ai-cart-btn.added {
+      background: linear-gradient(135deg, #4ADE80 0%, #22C55E 100%);
+      color: white;
+    }
+    .toast {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: rgba(69, 26, 3, 0.95);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 200;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
       position: absolute;
       bottom: 70px;
       left: 0;
@@ -276,11 +318,103 @@
       background: #FBBF24;
       color: #451A03;
     }
-    .food-card-img {
-      width: 80px;
-      height: 80px;
+    .mall-grid-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .mall-grid-icon:active { transform: scale(0.95); }
+    .mall-grid-icon .icon-box {
+      width: 48px;
+      height: 48px;
       border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .mall-grid-icon .icon-label {
+      font-size: 11px;
+      color: #451A03;
+      font-weight: 500;
+    }
+    .mall-product-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(120, 53, 15, 0.06);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .mall-product-card:active { transform: scale(0.98); }
+    .mall-search-bar {
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      border-radius: 24px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mall-search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: #451A03;
+    }
+    .mall-search-bar input::placeholder { color: #92400E; opacity: 0.5; }
+    .waterfall {
+      column-count: 2;
+      column-gap: 12px;
+    }
+    .waterfall-item {
+      break-inside: avoid;
+      margin-bottom: 12px;
+      background: #FFFFFF;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(120, 53, 15, 0.06);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .waterfall-item:active { transform: scale(0.98); }
+    .waterfall-item img {
+      width: 100%;
+      display: block;
       object-fit: cover;
+    }
+    .waterfall-content {
+      padding: 12px;
+    }
+    .waterfall-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #451A03;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .waterfall-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .waterfall-tag {
+      padding: 3px 8px;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+      font-size: 10px;
+      color: #92400E;
+      font-weight: 500;
     }
     .bottom-tab {
       box-shadow: 0 -4px 24px rgba(120, 53, 15, 0.08);
@@ -920,8 +1054,14 @@
                       </ol>
                     </div>
                     <div class="p-2.5 bg-primary-50 rounded-xl">
-                      <p class="text-xs text-warm-text"><span class="font-semibold">适用场景：</span>软便恢复期、肠胃敏感、术后调理。建议连续喂食 2-3 天观察便便状态。</p>
+                      <p class="text-xs font-semibold text-warm-text mb-1">适用场景</p>
+                      <p class="text-xs text-warm-text">软便恢复期、肠胃敏感、术后调理。建议连续喂食 2-3 天观察便便状态。</p>
                     </div>
+
+                    <button class="ai-cart-btn" onclick="event.stopPropagation(); aiAddToCart(this)">
+                      <i data-lucide="sparkles" class="w-4 h-4"></i>
+                      AI一键加入购物车
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1048,6 +1188,16 @@
                         <p class="text-xs text-purple-700">每周称重 1 次，目标每周减重 0.3-0.5kg</p>
                       </div>
                     </div>
+
+                    <div class="p-3 bg-blue-50 rounded-xl">
+                      <p class="text-xs font-semibold text-blue-800 mb-1">适用场景</p>
+                      <p class="text-xs text-blue-700">体重超标、活动量减少、兽医建议控制体重的成年犬；不适用于幼犬、孕犬及患病期间。</p>
+                    </div>
+
+                    <button class="ai-cart-btn" onclick="event.stopPropagation(); aiAddToCart(this)">
+                      <i data-lucide="sparkles" class="w-4 h-4"></i>
+                      AI一键加入购物车
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1121,65 +1271,101 @@
           <!-- 推荐 -->
           <div id="discover-recommend" class="discover-page active">
             <!-- 搜索 -->
-            <div class="relative mb-4">
-              <input type="text" placeholder="搜索推荐内容..." class="w-full bg-white rounded-2xl pl-11 pr-4 py-3 shadow-card text-sm text-warm-text placeholder-warm-muted outline-none border border-primary-100">
-              <i data-lucide="search" class="w-5 h-5 text-warm-muted absolute left-4 top-1/2 -translate-y-1/2"></i>
+            <div class="mall-search-bar mb-4">
+              <input type="text" placeholder="搜索好物、食谱、养宠经验...">
+              <button class="p-1.5 hover:bg-primary-50 rounded-full transition-colors">
+                <i data-lucide="camera" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+              <button class="px-4 py-1.5 bg-primary-400 text-white text-sm font-semibold rounded-full shadow-button">搜索</button>
             </div>
 
-            <!-- 鲜粮食材推荐 -->
-            <div class="section-card">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="font-heading font-bold text-warm-text">鲜粮食材推荐</h3>
-                <span class="text-xs text-primary-700 font-semibold">按布丁需求推荐</span>
-              </div>
-              <div class="space-y-3">
-                <div class="flex gap-3 p-3 bg-primary-50 rounded-2xl">
-                  <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=160&h=160&fit=crop" class="food-card-img">
-                  <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                      <h4 class="font-semibold text-warm-text">鸡胸肉</h4>
-                      <span class="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded-full">推荐</span>
-                    </div>
-                    <p class="text-xs text-warm-muted mt-1">高蛋白、低脂肪 · 适合：犬/猫</p>
-                    <p class="text-xs text-warm-text mt-1">布丁最近需要控制脂肪，鸡胸肉是优质选择</p>
-                  </div>
-                </div>
-                <div class="flex gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
-                  <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=160&h=160&fit=crop" class="food-card-img">
-                  <div class="flex-1">
-                    <h4 class="font-semibold text-warm-text">胡萝卜</h4>
-                    <p class="text-xs text-warm-muted mt-1">富含纤维、维生素A · 适合：犬</p>
-                    <p class="text-xs text-warm-text mt-1">补充膳食纤维，促进肠道健康</p>
+            <!-- 双列瀑布流推荐 -->
+            <div class="waterfall">
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&h=400&fit=crop" style="aspect-ratio: 3/4;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">鸡胸肉冻干 500g，低脂高蛋白训练奖励</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">零食</span>
+                    <span class="waterfall-tag">高蛋白</span>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- 成品粮推荐 -->
-            <div class="section-card">
-              <h3 class="font-heading font-bold text-warm-text mb-3">成品粮食推荐</h3>
-              <div class="space-y-3">
-                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">干粮</span>
-                    <span class="text-xs text-warm-muted">¥268/2kg</span>
-                  </div>
-                  <h4 class="font-semibold text-warm-text">某品牌低敏三文鱼粮</h4>
-                  <p class="text-xs text-warm-muted mt-1">三文鱼、马铃薯、豌豆 · 无谷物</p>
-                  <p class="text-xs text-warm-text mt-1">适合：对鸡肉过敏、皮肤敏感的狗狗</p>
-                  <div class="flex gap-2 mt-2">
-                    <span class="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full">配料表干净</span>
-                    <span class="text-xs text-primary-700 bg-primary-50 px-2 py-0.5 rounded-full">低敏配方</span>
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300&h=360&fit=crop" style="aspect-ratio: 5/6;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">低敏三文鱼全价犬粮 2kg，无谷物配方</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">干粮</span>
+                    <span class="waterfall-tag">低敏</span>
                   </div>
                 </div>
-                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-semibold">湿粮</span>
-                    <span class="text-xs text-warm-muted">¥18/罐</span>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=300&h=420&fit=crop" style="aspect-ratio: 5/7;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">新鲜胡萝卜 1kg，狗狗肠胃调理蔬菜</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">鲜粮食材</span>
+                    <span class="waterfall-tag">纤维</span>
                   </div>
-                  <h4 class="font-semibold text-warm-text">某品牌火鸡蔬菜罐头</h4>
-                  <p class="text-xs text-warm-muted mt-1">火鸡肉、南瓜、胡萝卜 · 无添加剂</p>
-                  <p class="text-xs text-warm-text mt-1">适合：补水、挑食、老年犬</p>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1623366302587-b38b1ddaefd9?w=300&h=380&fit=crop" style="aspect-ratio: 15/19;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">火鸡蔬菜罐头 85g×6，补水挑食专用</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">湿粮</span>
+                    <span class="waterfall-tag">无添加</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=300&h=340&fit=crop" style="aspect-ratio: 15/17;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">自制南瓜鸡肉粥食谱，软便恢复期推荐</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">食谱</span>
+                    <span class="waterfall-tag">肠胃调理</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=300&h=400&fit=crop" style="aspect-ratio: 3/4;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">狗狗水果喂食指南：蓝莓、苹果、香蕉</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">知识</span>
+                    <span class="waterfall-tag">安全速查</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&h=360&fit=crop" style="aspect-ratio: 5/6;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">金毛减脂期饮食方案，3个月健康减重</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">饮食方案</span>
+                    <span class="waterfall-tag">体重管理</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=440&fit=crop" style="aspect-ratio: 15/22;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">幼猫到家第一周饮食安排，新手养猫必看</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">新手</span>
+                    <span class="waterfall-tag">猫咪</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1187,76 +1373,112 @@
 
           <!-- 商城 -->
           <div id="discover-mall" class="discover-page">
-            <!-- 搜索 -->
-            <div class="relative mb-4">
-              <input type="text" placeholder="搜索食材、粮食..." class="w-full bg-white rounded-2xl pl-11 pr-4 py-3 shadow-card text-sm text-warm-text placeholder-warm-muted outline-none border border-primary-100">
-              <i data-lucide="search" class="w-5 h-5 text-warm-muted absolute left-4 top-1/2 -translate-y-1/2"></i>
+            <!-- 搜索栏 -->
+            <div class="mall-search-bar mb-4">
+              <input type="text" placeholder="搜索宠物用品、粮食、零食...">
+              <button class="p-1.5 hover:bg-primary-50 rounded-full transition-colors">
+                <i data-lucide="camera" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+              <button class="px-4 py-1.5 bg-primary-400 text-white text-sm font-semibold rounded-full shadow-button">搜索</button>
             </div>
 
             <!-- 分类标签 -->
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+            <div class="flex gap-3 mb-5 overflow-x-auto pb-2 scrollbar-hide">
               <button class="category-pill active bg-primary-100 text-warm-text whitespace-nowrap">全部</button>
               <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">鲜粮食材</button>
               <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">干粮</button>
               <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">湿粮</button>
               <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">零食</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">用品</button>
             </div>
 
-            <!-- 鲜粮食材购买 -->
-            <div class="section-card">
-              <h3 class="font-heading font-bold text-warm-text mb-3">鲜粮食材</h3>
-              <div class="space-y-3">
-                <div class="flex gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
-                  <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=160&h=160&fit=crop" class="food-card-img">
-                  <div class="flex-1">
-                    <h4 class="font-semibold text-warm-text">鸡胸肉 500g</h4>
-                    <p class="text-xs text-warm-muted mt-1">冷冻去皮 · 人食级</p>
-                    <div class="flex items-center justify-between mt-2">
-                      <span class="text-sm font-bold text-primary-700">¥29.9</span>
-                      <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
-                  <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=160&h=160&fit=crop" class="food-card-img">
-                  <div class="flex-1">
-                    <h4 class="font-semibold text-warm-text">胡萝卜 1kg</h4>
-                    <p class="text-xs text-warm-muted mt-1">新鲜有机 · 适合犬类</p>
-                    <div class="flex items-center justify-between mt-2">
-                      <span class="text-sm font-bold text-primary-700">¥12.8</span>
-                      <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
-                    </div>
-                  </div>
-                </div>
+            <!-- 功能入口网格 -->
+            <div class="grid grid-cols-5 gap-y-4 mb-5">
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-red-100"><i data-lucide="sparkles" class="w-6 h-6 text-red-600"></i></div>
+                <span class="icon-label">AI购买</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-blue-100"><i data-lucide="cookie" class="w-6 h-6 text-blue-600"></i></div>
+                <span class="icon-label">成品粮食</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-orange-100"><i data-lucide="bone" class="w-6 h-6 text-orange-600"></i></div>
+                <span class="icon-label">零食专区</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-green-100"><i data-lucide="pill" class="w-6 h-6 text-green-600"></i></div>
+                <span class="icon-label">营养补剂</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-purple-100"><i data-lucide="beef" class="w-6 h-6 text-purple-600"></i></div>
+                <span class="icon-label">鲜粮食材</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-pink-100"><i data-lucide="clipboard-list" class="w-6 h-6 text-pink-600"></i></div>
+                <span class="icon-label">我的订单</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-yellow-100"><i data-lucide="shopping-cart" class="w-6 h-6 text-yellow-600"></i></div>
+                <span class="icon-label">购物车</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-teal-100"><i data-lucide="ticket" class="w-6 h-6 text-teal-600"></i></div>
+                <span class="icon-label">优惠券</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-indigo-100"><i data-lucide="message-circle" class="w-6 h-6 text-indigo-600"></i></div>
+                <span class="icon-label">客服消息</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-rose-100"><i data-lucide="footprints" class="w-6 h-6 text-rose-600"></i></div>
+                <span class="icon-label">商品足迹</span>
               </div>
             </div>
 
-            <!-- 成品粮购买 -->
-            <div class="section-card">
-              <h3 class="font-heading font-bold text-warm-text mb-3">成品粮食</h3>
-              <div class="space-y-3">
-                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">干粮</span>
-                    <span class="text-xs text-warm-muted">某品牌官方店</span>
-                  </div>
-                  <h4 class="font-semibold text-warm-text">低敏三文鱼粮 2kg</h4>
-                  <p class="text-xs text-warm-muted mt-1">三文鱼、马铃薯、豌豆 · 无谷物</p>
+            <!-- 推荐商品 -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">某品牌官方店</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">鸡胸肉冻干 500g 宠物零食</h4>
                   <div class="flex items-center justify-between mt-2">
-                    <span class="text-sm font-bold text-primary-700">¥268</span>
-                    <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
+                    <span class="text-base font-bold text-primary-700">¥59.9</span>
+                    <span class="text-xs text-warm-muted">已售 2300+</span>
                   </div>
                 </div>
-                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-semibold">湿粮</span>
-                    <span class="text-xs text-warm-muted">某品牌官方店</span>
-                  </div>
-                  <h4 class="font-semibold text-warm-text">火鸡蔬菜罐头 6罐</h4>
-                  <p class="text-xs text-warm-muted mt-1">火鸡肉、南瓜、胡萝卜 · 无添加剂</p>
+              </div>
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">某品牌官方店</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">低敏三文鱼全价犬粮 2kg</h4>
                   <div class="flex items-center justify-between mt-2">
-                    <span class="text-sm font-bold text-primary-700">¥98</span>
-                    <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
+                    <span class="text-base font-bold text-primary-700">¥268</span>
+                    <span class="text-xs text-warm-muted">已售 880+</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">有机农场直供</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">新鲜胡萝卜 1kg 狗狗蔬菜</h4>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-base font-bold text-primary-700">¥12.8</span>
+                    <span class="text-xs text-warm-muted">已售 5600+</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1623366302587-b38b1ddaefd9?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">某品牌官方店</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">火鸡蔬菜罐头 85g×6</h4>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-base font-bold text-primary-700">¥98</span>
+                    <span class="text-xs text-warm-muted">已售 1200+</span>
                   </div>
                 </div>
               </div>
@@ -1552,6 +1774,30 @@
       event.target.classList.add('active');
     }
 
+    // AI 一键加入购物车
+    function aiAddToCart(btn) {
+      btn.classList.add('added');
+      btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> 已加入购物车';
+      lucide.createIcons();
+
+      showToast('AI 正在识别附近可配送商品，已自动加入购物车');
+
+      setTimeout(() => {
+        btn.classList.remove('added');
+        btn.innerHTML = '<i data-lucide="sparkles" class="w-4 h-4"></i> AI一键加入购物车';
+        lucide.createIcons();
+      }, 2500);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
     // 食记卡片展开/收起
     function toggleNoteCard(card) {
       card.classList.toggle('expanded');
@@ -1796,5 +2042,6 @@
       });
     }
   </script>
+  <div id="toast" class="toast"></div>
 </body>
 </html>
