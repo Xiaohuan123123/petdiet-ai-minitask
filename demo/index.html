@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PetDiet AI - 宠物饮食健康助手</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#FFFBEB',
+              100: '#FEF3C7',
+              200: '#FDE68A',
+              300: '#FCD34D',
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+              700: '#B45309',
+              800: '#92400E',
+              900: '#78350F',
+            },
+            warm: {
+              cream: '#FFFDF7',
+              card: '#FFFFFF',
+              text: '#451A03',
+              muted: '#92400E',
+              border: '#FDE68A',
+            }
+          },
+          fontFamily: {
+            heading: ['Varela Round', 'sans-serif'],
+            body: ['Nunito Sans', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(251, 191, 36, 0.15)',
+            'card': '0 2px 12px rgba(120, 53, 15, 0.08)',
+            'button': '0 4px 12px rgba(245, 158, 11, 0.25)',
+            'tab': '0 -2px 20px rgba(120, 53, 15, 0.06)',
+          },
+          borderRadius: {
+            '2xl': '1rem',
+            '3xl': '1.5rem',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Nunito Sans', sans-serif;
+      background: #F5F0E8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .iphone-frame {
+      width: 393px;
+      height: 852px;
+      background: #000;
+      border-radius: 55px;
+      padding: 12px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      background: #FFFBEB;
+      border-radius: 45px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 37px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+    .page {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 95px 16px 100px 16px;
+      scrollbar-width: none;
+    }
+    .page.active { display: block; }
+    .page::-webkit-scrollbar { display: none; }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .font-heading { font-family: 'Varela Round', sans-serif; }
+    .tab-item { transition: all 0.2s ease; padding: 4px 8px; border-radius: 16px; }
+    .tab-item.active { color: #D97706; background: #FEF3C7; }
+    .tab-item.active .tab-icon { background: transparent; }
+    .message-bubble {
+      max-width: 78%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .message-user {
+      background: #FBBF24;
+      color: #451A03;
+      border-bottom-right-radius: 4px;
+    }
+    .message-ai {
+      background: #FFFFFF;
+      color: #451A03;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(120,53,15,0.08);
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .input-bar {
+      border: 1px solid #FDE68A;
+      box-shadow: 0 2px 12px rgba(251, 191, 36, 0.1);
+    }
+    .skill-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #4B5563;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      flex-shrink: 0;
+    }
+    .skill-pill:active {
+      background: #F3F4F6;
+      transform: scale(0.98);
+    }
+    .chat-input-wrapper {
+      position: absolute;
+      bottom: 70px;
+      left: 0;
+      right: 0;
+      background: #FFFBEB;
+      padding: 8px 16px 12px 16px;
+      z-index: 40;
+    }
+    .chat-input-bar {
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      border-radius: 28px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 12px rgba(251, 191, 36, 0.1);
+    }
+    .chat-input-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #1F2937;
+    }
+    .chat-input-bar input::placeholder {
+      color: #9CA3AF;
+    }
+    .suggestion-card {
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      border-radius: 16px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 4px rgba(120, 53, 15, 0.04);
+    }
+    .suggestion-card:active {
+      background: #FFFBEB;
+    }
+    .scroll-to-bottom {
+      position: absolute;
+      right: 16px;
+      bottom: 210px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid #FDE68A;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(120, 53, 15, 0.08);
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .scroll-to-bottom:active {
+      transform: scale(0.95);
+    }
+    .section-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 2px 12px rgba(120, 53, 15, 0.06);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .pet-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #FEF3C7;
+    }
+    .chart-container {
+      position: relative;
+      height: 160px;
+      width: 100%;
+    }
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #FBBF24;
+      border: 2px solid #FFF;
+      box-shadow: 0 0 0 2px #FDE68A;
+    }
+    .quick-btn {
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .quick-btn:active {
+      transform: scale(0.97);
+    }
+    .category-pill {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .category-pill.active {
+      background: #FBBF24;
+      color: #451A03;
+    }
+    .food-card-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      object-fit: cover;
+    }
+    .bottom-tab {
+      box-shadow: 0 -4px 24px rgba(120, 53, 15, 0.08);
+    }
+    .sub-tab {
+      position: relative;
+      padding-bottom: 8px;
+      font-weight: 600;
+      color: #92400E;
+      opacity: 0.6;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sub-tab.active {
+      opacity: 1;
+      color: #D97706;
+    }
+    #page-home { padding-top: 60px; }
+    #page-diary { padding-top: 60px; }
+    .sub-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20%;
+      right: 20%;
+      height: 3px;
+      background: #FBBF24;
+      border-radius: 3px;
+    }
+    .eat-page { display: none; }
+    .eat-page.active { display: block; }
+    .discover-page { display: none; }
+    .discover-page.active { display: block; }
+    .note-card { cursor: pointer; transition: all 0.2s; }
+    .note-card:active { transform: scale(0.99); }
+    .note-detail {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #FDE68A;
+    }
+    .note-card.expanded .note-detail { display: block; }
+    .expand-icon { transition: transform 0.2s; }
+    .note-card.expanded .expand-icon { transform: rotate(180deg); }
+    .toggle-switch {
+      width: 48px;
+      height: 28px;
+      background: #FDE68A;
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .toggle-switch.on {
+      background: #FBBF24;
+    }
+    .toggle-switch.on::after {
+      transform: translateX(20px);
+    }
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 54px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 14px 28px 0 28px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #451A03;
+      z-index: 90;
+      background: #FFFBEB;
+      pointer-events: none;
+    }
+    .calendar-popup {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 16px;
+      right: 16px;
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 8px 30px rgba(120, 53, 15, 0.12);
+      z-index: 100;
+      display: none;
+    }
+    .calendar-popup.show { display: block; }
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #451A03;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .calendar-day:hover { background: #FFFBEB; }
+    .calendar-day.selected { background: #FBBF24; color: #451A03; font-weight: 700; }
+    .calendar-day.other-month { color: #D1D5DB; }
+    .calendar-day.today { border: 1.5px solid #FBBF24; }
+    .nav-header {
+      position: absolute;
+      top: 54px;
+      left: 0;
+      right: 0;
+      padding: 0 20px 8px 20px;
+      background: #FFFBEB;
+      z-index: 80;
+      border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+    }
+    @media (max-width: 430px) {
+      body { padding: 0; }
+      .iphone-frame {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 0;
+      }
+      .iphone-screen { border-radius: 0; }
+      .dynamic-island { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="iphone-frame">
+    <div class="iphone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span id="clock">9:41</span>
+        <div class="flex gap-1.5 items-center">
+          <i data-lucide="signal" class="w-4 h-4"></i>
+          <i data-lucide="wifi" class="w-4 h-4"></i>
+          <i data-lucide="battery-full" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- 首页 -->
+      <div id="page-home" class="page active">
+
+        <div class="mt-2">
+          <!-- 宠物档案卡 -->
+          <div class="section-card !p-4">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200&h=200&fit=crop" alt="宠物头像" class="pet-avatar">
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary-400 rounded-full flex items-center justify-center">
+                  <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-warm-text"></i>
+                </div>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <h2 class="font-heading text-xl font-bold text-warm-text">布丁</h2>
+                  <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">金毛 · 3岁</span>
+                </div>
+                <p class="text-sm text-warm-muted mt-1">♂ 已绝育 · 28.5kg</p>
+                <div class="flex gap-2 mt-2 flex-wrap">
+                  <span class="px-2 py-1 bg-red-50 text-red-700 text-xs rounded-lg font-medium">鸡肉过敏</span>
+                  <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg font-medium">关节养护</span>
+                </div>
+              </div>
+              <button class="p-2 hover:bg-primary-50 rounded-xl transition-colors">
+                <i data-lucide="pencil" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 今日摘要 -->
+          <div class="section-card">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-heading text-lg font-bold text-warm-text">今日摘要</h3>
+              <span class="text-xs text-primary-700 font-semibold">今日评分 86</span>
+            </div>
+            <div class="space-y-3">
+              <!-- 爱宠简报 -->
+              <div class="p-4 bg-gradient-to-r from-pink-50 to-primary-50 rounded-2xl border border-primary-100">
+                <p class="text-sm font-semibold text-warm-text mb-2">爱宠简报</p>
+                <p class="text-xs text-warm-muted leading-relaxed">今天天气不错，适合带布丁去公园草地散步 30 分钟，让它自由嗅闻探索。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">晚上可以陪它玩 15 分钟寻物游戏或嗅闻垫，既能消耗精力又能增进感情。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">记得观察布丁今天的便便状态和精神状态，有任何异常及时记录到日记里。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">今天零食控制在 20g 以内，避免影响正餐食欲，建议选择低脂鸡肉干。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">别忘了今晚 8 点喂驱虫药，喂完后可以奖励一小块南瓜泥。</p>
+              </div>
+
+              <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl">
+                <div class="w-10 h-10 bg-primary-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="utensils" class="w-5 h-5 text-primary-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-warm-text">今日饮食</p>
+                  <p class="text-xs text-warm-muted">早：三文鱼粮 200g · 午：鸡胸肉 80g · 晚：蔬菜粥 150g</p>
+                </div>
+                <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-lg font-bold">A</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                <div class="w-10 h-10 bg-orange-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="footprints" class="w-5 h-5 text-orange-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-warm-text">今日运动</p>
+                  <p class="text-xs text-warm-muted">散步 45分钟 · 玩耍 20分钟</p>
+                </div>
+                <span class="text-xs text-warm-muted">达成 85%</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-red-50 rounded-2xl">
+                <div class="w-10 h-10 bg-red-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="bell" class="w-5 h-5 text-red-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-warm-text">待办提醒</p>
+                  <p class="text-xs text-warm-muted">今晚 8:00 喂驱虫药 · 本周六更新体重</p>
+                </div>
+                <span class="w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 近期趋势 -->
+          <div class="section-card">
+            <h3 class="font-heading text-lg font-bold text-warm-text mb-4">近期趋势</h3>
+            <div class="mb-4">
+              <p class="text-sm font-semibold text-warm-text mb-2">体重变化（最近30天）</p>
+              <div class="chart-container">
+                <canvas id="weightChart"></canvas>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-sm font-semibold text-warm-text mb-2">饮食结构</p>
+                <div class="chart-container !h-[130px]">
+                  <canvas id="dietChart"></canvas>
+                </div>
+              </div>
+              <div class="flex flex-col justify-center">
+                <div class="p-3 bg-primary-50 rounded-2xl">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-600 mb-1"></i>
+                  <p class="text-xs text-warm-text leading-relaxed">布丁近期体重稳定，蛋白质摄入充足，建议适当增加膳食纤维。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 快捷入口 -->
+          <div class="grid grid-cols-3 gap-3">
+            <button onclick="switchTab('diary')" class="quick-btn bg-white rounded-2xl p-4 shadow-card flex flex-col items-center gap-2">
+              <div class="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center">
+                <i data-lucide="notebook-pen" class="w-6 h-6 text-primary-700"></i>
+              </div>
+              <span class="text-xs font-semibold text-warm-text">记录吃饭</span>
+            </button>
+            <button onclick="switchTab('eat')" class="quick-btn bg-white rounded-2xl p-4 shadow-card flex flex-col items-center gap-2">
+              <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
+                <i data-lucide="message-circle" class="w-6 h-6 text-orange-700"></i>
+              </div>
+              <span class="text-xs font-semibold text-warm-text">问AI吃什么</span>
+            </button>
+            <button onclick="switchTab('discover')" class="quick-btn bg-white rounded-2xl p-4 shadow-card flex flex-col items-center gap-2">
+              <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                <i data-lucide="shopping-bag" class="w-6 h-6 text-green-700"></i>
+              </div>
+              <span class="text-xs font-semibold text-warm-text">买粮食</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 日记页 -->
+      <div id="page-diary" class="page">
+
+        <div class="mt-2">
+          <!-- 日期选择 -->
+          <div class="section-card !p-3 flex items-center justify-between relative">
+            <button class="p-2 hover:bg-primary-50 rounded-xl"><i data-lucide="chevron-left" class="w-5 h-5 text-warm-muted"></i></button>
+            <div class="text-center cursor-pointer" onclick="toggleCalendar()">
+              <p id="diary-date" class="font-heading font-bold text-warm-text">6月24日</p>
+              <p id="diary-weekday" class="text-xs text-warm-muted">今天</p>
+            </div>
+            <button class="p-2 hover:bg-primary-50 rounded-xl"><i data-lucide="chevron-right" class="w-5 h-5 text-warm-muted"></i></button>
+
+            <!-- 日历弹窗 -->
+            <div id="calendar-popup" class="calendar-popup">
+              <div class="flex items-center justify-between mb-3">
+                <button onclick="changeMonth(-1)" class="p-1.5 hover:bg-primary-50 rounded-lg"><i data-lucide="chevron-left" class="w-4 h-4 text-warm-muted"></i></button>
+                <span id="calendar-month-year" class="font-heading font-bold text-warm-text">2026年6月</span>
+                <button onclick="changeMonth(1)" class="p-1.5 hover:bg-primary-50 rounded-lg"><i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i></button>
+              </div>
+              <div class="grid grid-cols-7 gap-1 mb-2">
+                <span class="text-center text-xs text-warm-muted py-1">日</span>
+                <span class="text-center text-xs text-warm-muted py-1">一</span>
+                <span class="text-center text-xs text-warm-muted py-1">二</span>
+                <span class="text-center text-xs text-warm-muted py-1">三</span>
+                <span class="text-center text-xs text-warm-muted py-1">四</span>
+                <span class="text-center text-xs text-warm-muted py-1">五</span>
+                <span class="text-center text-xs text-warm-muted py-1">六</span>
+              </div>
+              <div id="calendar-days" class="grid grid-cols-7 gap-1"></div>
+            </div>
+          </div>
+
+          <!-- AI饮食计划 -->
+          <div class="section-card bg-gradient-to-br from-primary-100 to-primary-50 border border-primary-200">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 bg-primary-400 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <h3 class="font-heading font-bold text-warm-text">今日推荐食谱</h3>
+                <p class="text-sm text-warm-muted mt-1">基于布丁的过敏史和体重，推荐低脂高蛋白方案：</p>
+                <ul class="text-sm text-warm-text mt-2 space-y-1">
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>早餐：三文鱼粮 200g</li>
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>午餐：火鸡胸肉 80g + 胡萝卜</li>
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>晚餐：南瓜牛肉粥 150g</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 运动建议 -->
+          <div class="section-card">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                <i data-lucide="footprints" class="w-5 h-5 text-orange-700"></i>
+              </div>
+              <div>
+                <h3 class="font-heading font-bold text-warm-text">运动建议</h3>
+                <p class="text-sm text-warm-muted">今天热量略高，建议增加运动</p>
+              </div>
+            </div>
+            <p class="text-sm text-warm-text ml-13">建议傍晚散步 <span class="font-bold text-primary-700">40分钟</span>，避免剧烈运动后立即进食。</p>
+          </div>
+
+          <!-- 时间线 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-4">今日记录</h3>
+            <div class="relative pl-5 space-y-6">
+              <div class="absolute left-[9px] top-2 bottom-2 w-0.5 bg-primary-200"></div>
+
+              <div class="relative">
+                <div class="timeline-dot absolute -left-[13px] top-1.5"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-primary-700 bg-primary-100 px-2 py-0.5 rounded-full">饮食</span>
+                    <span class="text-xs text-warm-muted">08:30</span>
+                  </div>
+                  <div class="bg-primary-50 rounded-2xl p-3">
+                    <p class="text-sm font-semibold text-warm-text">早餐</p>
+                    <p class="text-xs text-warm-muted">三文鱼粮 200g · 完成度 100%</p>
+                    <div class="flex gap-2 mt-2">
+                      <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=100&h=100&fit=crop" class="w-12 h-12 rounded-lg object-cover">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <div class="timeline-dot absolute -left-[13px] top-1.5"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">运动</span>
+                    <span class="text-xs text-warm-muted">10:00</span>
+                  </div>
+                  <div class="bg-orange-50 rounded-2xl p-3">
+                    <p class="text-sm font-semibold text-warm-text">晨间散步</p>
+                    <p class="text-xs text-warm-muted">45分钟 · 中等强度</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <div class="timeline-dot absolute -left-[13px] top-1.5"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">健康</span>
+                    <span class="text-xs text-warm-muted">11:30</span>
+                  </div>
+                  <div class="bg-red-50 rounded-2xl p-3">
+                    <p class="text-sm font-semibold text-warm-text">便便记录</p>
+                    <p class="text-xs text-warm-muted">正常 · 棕色 · 成型</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 提醒设置 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">定时提醒</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 bg-primary-50 rounded-2xl">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="clock" class="w-5 h-5 text-primary-700"></i>
+                  <div>
+                    <p class="text-sm font-semibold text-warm-text">早餐喂食</p>
+                    <p class="text-xs text-warm-muted">每天 08:00</p>
+                  </div>
+                </div>
+                <div class="toggle-switch on"></div>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-blue-50 rounded-2xl">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="droplets" class="w-5 h-5 text-blue-700"></i>
+                  <div>
+                    <p class="text-sm font-semibold text-warm-text">饮水提醒</p>
+                    <p class="text-xs text-warm-muted">每天 12:00、18:00</p>
+                  </div>
+                </div>
+                <div class="toggle-switch on"></div>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-purple-50 rounded-2xl">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="pill" class="w-5 h-5 text-purple-700"></i>
+                  <div>
+                    <p class="text-sm font-semibold text-warm-text">驱虫药</p>
+                    <p class="text-xs text-warm-muted">每月24日 20:00</p>
+                  </div>
+                </div>
+                <div class="toggle-switch on"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 快捷记录按钮 -->
+          <div class="flex gap-3">
+            <button class="quick-btn flex-1 bg-primary-400 text-white rounded-2xl py-4 shadow-button flex items-center justify-center gap-2 font-semibold">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+              记录吃饭
+            </button>
+            <button class="quick-btn flex-1 bg-orange-400 text-white rounded-2xl py-4 shadow-button flex items-center justify-center gap-2 font-semibold">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+              记录运动
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 吃饭页 -->
+      <div id="page-eat" class="page">
+        <div class="nav-header">
+          <div class="relative flex items-center justify-center">
+            <div class="flex items-center justify-center gap-8">
+              <button class="sub-tab active" onclick="switchEatTab('chat')">AI讨论</button>
+              <button class="sub-tab" onclick="switchEatTab('notes')">食记</button>
+              <button class="sub-tab" onclick="switchEatTab('history')">历史</button>
+            </div>
+            <button class="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-primary-100 hover:bg-primary-200 rounded-full flex items-center justify-center transition-colors" title="新话题">
+              <i data-lucide="plus" class="w-5 h-5 text-primary-700"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <!-- AI讨论子页面 -->
+          <div id="eat-chat" class="eat-page active">
+            <div class="space-y-4 mb-44">
+              <div class="flex gap-3">
+                <div class="w-8 h-8 rounded-full bg-primary-200 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-700"></i>
+                </div>
+                <div class="message-bubble message-ai">
+                  <p>嗨！我是你的宠物饮食助手，告诉我你想了解什么？</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3 justify-end">
+                <div class="message-bubble message-user">
+                  <p>布丁最近有点软便，该吃什么？</p>
+                </div>
+              </div>
+
+              <!-- AI 深度思考/推荐卡片 -->
+              <div class="suggestion-card mb-2">
+                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="lightbulb" class="w-4 h-4 text-primary-600"></i>
+                </div>
+                <span class="text-sm text-warm-text flex-1">布丁软便期间饮食方案</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="w-8 h-8 rounded-full bg-primary-200 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-700"></i>
+                </div>
+                <div class="message-bubble message-ai">
+                  <p class="font-semibold text-base mb-2">软便期间饮食建议</p>
+                  <ol class="space-y-2 text-sm ml-4 list-decimal">
+                    <li>暂停零食和新的食物</li>
+                    <li>选择易消化的主食：白鸡肉+南瓜+白米饭</li>
+                    <li>少量多餐，每餐减至平时的70%</li>
+                    <li>保证充足饮水</li>
+                  </ol>
+                  <div class="mt-3 p-2.5 bg-red-50 rounded-xl">
+                    <p class="text-xs text-red-700">若持续超过24小时或伴有呕吐，请及时咨询兽医</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex gap-3 justify-end">
+                <div class="message-bubble message-user">
+                  <p>南瓜鸡肉粥怎么做？</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="w-8 h-8 rounded-full bg-primary-200 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-700"></i>
+                </div>
+                <div class="message-bubble message-ai">
+                  <p class="font-semibold text-base mb-2">南瓜鸡肉粥食谱</p>
+                  <div class="bg-primary-50 rounded-xl p-3">
+                    <p class="text-sm"><span class="font-semibold">食材：</span>鸡胸肉150g、南瓜100g、糙米50g</p>
+                    <p class="text-sm mt-2 font-semibold">步骤：</p>
+                    <ol class="text-sm space-y-1.5 ml-4 list-decimal">
+                      <li>鸡肉切丁焯水去沫</li>
+                      <li>南瓜去皮切块蒸软</li>
+                      <li>糙米煮成粥后加入食材</li>
+                      <li>小火煮15分钟至软烂</li>
+                    </ol>
+                  </div>
+                  <p class="text-xs text-warm-muted mt-2">适合软便恢复期，可保存到食记</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 滚动到底部按钮 -->
+            <button class="scroll-to-bottom">
+              <i data-lucide="arrow-down" class="w-5 h-5 text-gray-500"></i>
+            </button>
+
+            <!-- Skill 选择栏 + 输入栏 -->
+            <div class="chat-input-wrapper">
+              <!-- 可滑动的 Skill 选择 -->
+              <div class="flex gap-2 mb-1 overflow-x-auto pb-1 scrollbar-hide">
+                <button class="skill-pill">
+                  <i data-lucide="chef-hat" class="w-4 h-4 text-gray-500"></i>
+                  食谱规划
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="file-text" class="w-4 h-4 text-gray-500"></i>
+                  体检报告
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="footprints" class="w-4 h-4 text-gray-500"></i>
+                  运动规划
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="bell" class="w-4 h-4 text-gray-500"></i>
+                  饮食提醒
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="carrot" class="w-4 h-4 text-gray-500"></i>
+                  鲜粮做法
+                </button>
+              </div>
+
+              <!-- 输入栏 -->
+              <div class="chat-input-bar">
+                <button class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center transition-colors">
+                  <i data-lucide="mic" class="w-5 h-5 text-gray-600"></i>
+                </button>
+                <input type="text" placeholder="尽管问，带图也行">
+                <button class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center transition-colors">
+                  <i data-lucide="plus" class="w-5 h-5 text-gray-600"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 食记子页面 -->
+          <div id="eat-notes" class="eat-page">
+            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+              <button class="category-pill active bg-primary-100 text-warm-text whitespace-nowrap">全部</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">饮食方案</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">食物安全</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">鲜粮食谱</button>
+            </div>
+
+            <div class="space-y-4">
+              <div class="section-card note-card" onclick="toggleNoteCard(this)">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="soup" class="w-5 h-5 text-primary-700"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-heading font-bold text-warm-text">南瓜鸡肉粥</h4>
+                      <button class="text-xs text-primary-600 font-semibold">编辑</button>
+                    </div>
+                    <p class="text-xs text-warm-muted mt-1">来自 AI讨论 · 2026.06.24</p>
+                    <p class="text-sm text-warm-text mt-2">软便恢复期食谱，易消化、低刺激</p>
+                    <div class="flex items-center justify-between mt-3">
+                      <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 bg-primary-50 text-primary-800 text-xs rounded-lg">鲜粮食谱</span>
+                        <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-lg">肠胃调理</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="expand-icon w-4 h-4 text-warm-muted"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="note-detail">
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-1.5">所需食材</p>
+                      <ul class="text-sm text-warm-text space-y-1">
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>鸡胸肉 150g（去皮去脂）</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>南瓜 100g（去皮去籽）</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>糙米 50g（或白米）</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>清水 400ml</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-1.5">制作步骤</p>
+                      <ol class="text-sm text-warm-text space-y-1.5 ml-4 list-decimal">
+                        <li>鸡胸肉切丁，冷水下锅焯水去沫，捞出沥干</li>
+                        <li>南瓜去皮切块，蒸 10 分钟至软烂</li>
+                        <li>糙米洗净后加水煮成粥</li>
+                        <li>粥熟后加入鸡肉丁和南瓜，小火煮 15 分钟</li>
+                        <li>放凉至室温后即可喂食</li>
+                      </ol>
+                    </div>
+                    <div class="p-2.5 bg-primary-50 rounded-xl">
+                      <p class="text-xs text-warm-text"><span class="font-semibold">适用场景：</span>软便恢复期、肠胃敏感、术后调理。建议连续喂食 2-3 天观察便便状态。</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card note-card" onclick="toggleNoteCard(this)">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-green-700"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-heading font-bold text-warm-text">食物安全：蓝莓</h4>
+                      <button class="text-xs text-primary-600 font-semibold">编辑</button>
+                    </div>
+                    <p class="text-xs text-warm-muted mt-1">来自 AI讨论 · 2026.06.23</p>
+                    <p class="text-sm text-warm-text mt-2">✅ 可以少量食用，富含抗氧化剂，每次不超过5颗</p>
+                    <div class="flex items-center justify-between mt-3">
+                      <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 bg-green-50 text-green-700 text-xs rounded-lg">食物安全</span>
+                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg">水果</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="expand-icon w-4 h-4 text-warm-muted"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="note-detail">
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-1.5">食物介绍</p>
+                      <p class="text-sm text-warm-text leading-relaxed">蓝莓是低糖水果，富含花青素、维生素 C 和膳食纤维，对狗狗的视力和免疫力有一定帮助。果肉软糯，大多数狗狗容易接受。</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="p-2.5 bg-green-50 rounded-xl">
+                        <p class="text-xs font-semibold text-green-800 mb-1">✅ 好处</p>
+                        <ul class="text-xs text-green-700 space-y-1">
+                          <li>抗氧化、抗炎</li>
+                          <li>补充维生素 C</li>
+                          <li>促进肠道蠕动</li>
+                          <li>低热量适合减脂期</li>
+                        </ul>
+                      </div>
+                      <div class="p-2.5 bg-red-50 rounded-xl">
+                        <p class="text-xs font-semibold text-red-800 mb-1">⚠️ 禁忌/注意</p>
+                        <ul class="text-xs text-red-700 space-y-1">
+                          <li>必须去核、去蒂</li>
+                          <li>每次不超过 5 颗</li>
+                          <li>肠胃敏感狗狗慎喂</li>
+                          <li>第一次喂食需观察过敏反应</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="p-2.5 bg-blue-50 rounded-xl">
+                      <p class="text-xs text-blue-800"><span class="font-semibold">喂食建议：</span>选择新鲜蓝莓，洗净后可整颗或切半喂食；不建议喂蓝莓干或含糖蓝莓制品。</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card note-card" onclick="toggleNoteCard(this)">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-700"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-heading font-bold text-warm-text">布丁减脂期饮食方案</h4>
+                      <button class="text-xs text-primary-600 font-semibold">编辑</button>
+                    </div>
+                    <p class="text-xs text-warm-muted mt-1">来自 AI讨论 · 2026.06.20</p>
+                    <p class="text-sm text-warm-text mt-2">控制热量摄入，增加纤维，每日主食减少15%</p>
+                    <div class="flex items-center justify-between mt-3">
+                      <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg">饮食方案</span>
+                        <span class="px-2 py-1 bg-purple-50 text-purple-700 text-xs rounded-lg">体重管理</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="expand-icon w-4 h-4 text-warm-muted"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="note-detail">
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-primary-50 rounded-xl">
+                      <div>
+                        <p class="text-xs text-warm-muted">目标体重</p>
+                        <p class="text-lg font-bold text-warm-text">27.0 kg</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-warm-muted">当前体重</p>
+                        <p class="text-lg font-bold text-warm-text">28.5 kg</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-warm-muted">周期</p>
+                        <p class="text-lg font-bold text-warm-text">4 周</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-2">每日执行计划</p>
+                      <div class="space-y-2">
+                        <div class="flex items-start gap-2 p-2.5 bg-white border border-primary-100 rounded-xl">
+                          <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">早餐</span>
+                          <p class="text-sm text-warm-text">低脂粮 180g + 水煮西兰花 30g</p>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 bg-white border border-primary-100 rounded-xl">
+                          <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">午餐</span>
+                          <p class="text-sm text-warm-text">鸡胸肉 80g + 胡萝卜 50g</p>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 bg-white border border-primary-100 rounded-xl">
+                          <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">晚餐</span>
+                          <p class="text-sm text-warm-text">低脂粮 150g + 南瓜 40g</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="p-2.5 bg-orange-50 rounded-xl">
+                        <p class="text-xs font-semibold text-orange-800 mb-1">运动配合</p>
+                        <p class="text-xs text-orange-700">每日散步 45-60 分钟，周末可增加一次游泳或追球游戏</p>
+                      </div>
+                      <div class="p-2.5 bg-purple-50 rounded-xl">
+                        <p class="text-xs font-semibold text-purple-800 mb-1">监测指标</p>
+                        <p class="text-xs text-purple-700">每周称重 1 次，目标每周减重 0.3-0.5kg</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 历史子页面 -->
+          <div id="eat-history" class="eat-page">
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">历史对话</h3>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <i data-lucide="message-square" class="w-5 h-5 text-primary-700"></i>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-warm-text">软便期间饮食</p>
+                    <p class="text-xs text-warm-muted">2026.06.24 · 5条消息</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <i data-lucide="message-square" class="w-5 h-5 text-primary-700"></i>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-warm-text">金毛幼犬吃什么</p>
+                    <p class="text-xs text-warm-muted">2026.06.22 · 8条消息</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <i data-lucide="message-square" class="w-5 h-5 text-primary-700"></i>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-warm-text">自制鲜粮配方</p>
+                    <p class="text-xs text-warm-muted">2026.06.18 · 12条消息</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">常见问题收藏</h3>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                  <i data-lucide="star" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
+                  <p class="text-sm text-warm-text">狗狗能吃巧克力吗？</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                  <i data-lucide="star" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
+                  <p class="text-sm text-warm-text">如何判断狗粮好坏？</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                  <i data-lucide="star" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
+                  <p class="text-sm text-warm-text">生骨肉入门指南</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 发现页 -->
+      <div id="page-discover" class="page">
+        <div class="nav-header">
+          <div class="flex items-center justify-center gap-8">
+            <button class="sub-tab active" onclick="switchDiscoverTab('recommend')">推荐</button>
+            <button class="sub-tab" onclick="switchDiscoverTab('mall')">商城</button>
+            <button class="sub-tab" onclick="switchDiscoverTab('knowledge')">知识库</button>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <!-- 推荐 -->
+          <div id="discover-recommend" class="discover-page active">
+            <!-- 搜索 -->
+            <div class="relative mb-4">
+              <input type="text" placeholder="搜索推荐内容..." class="w-full bg-white rounded-2xl pl-11 pr-4 py-3 shadow-card text-sm text-warm-text placeholder-warm-muted outline-none border border-primary-100">
+              <i data-lucide="search" class="w-5 h-5 text-warm-muted absolute left-4 top-1/2 -translate-y-1/2"></i>
+            </div>
+
+            <!-- 鲜粮食材推荐 -->
+            <div class="section-card">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-heading font-bold text-warm-text">鲜粮食材推荐</h3>
+                <span class="text-xs text-primary-700 font-semibold">按布丁需求推荐</span>
+              </div>
+              <div class="space-y-3">
+                <div class="flex gap-3 p-3 bg-primary-50 rounded-2xl">
+                  <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=160&h=160&fit=crop" class="food-card-img">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-semibold text-warm-text">鸡胸肉</h4>
+                      <span class="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded-full">推荐</span>
+                    </div>
+                    <p class="text-xs text-warm-muted mt-1">高蛋白、低脂肪 · 适合：犬/猫</p>
+                    <p class="text-xs text-warm-text mt-1">布丁最近需要控制脂肪，鸡胸肉是优质选择</p>
+                  </div>
+                </div>
+                <div class="flex gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
+                  <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=160&h=160&fit=crop" class="food-card-img">
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">胡萝卜</h4>
+                    <p class="text-xs text-warm-muted mt-1">富含纤维、维生素A · 适合：犬</p>
+                    <p class="text-xs text-warm-text mt-1">补充膳食纤维，促进肠道健康</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 成品粮推荐 -->
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">成品粮食推荐</h3>
+              <div class="space-y-3">
+                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">干粮</span>
+                    <span class="text-xs text-warm-muted">¥268/2kg</span>
+                  </div>
+                  <h4 class="font-semibold text-warm-text">某品牌低敏三文鱼粮</h4>
+                  <p class="text-xs text-warm-muted mt-1">三文鱼、马铃薯、豌豆 · 无谷物</p>
+                  <p class="text-xs text-warm-text mt-1">适合：对鸡肉过敏、皮肤敏感的狗狗</p>
+                  <div class="flex gap-2 mt-2">
+                    <span class="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full">配料表干净</span>
+                    <span class="text-xs text-primary-700 bg-primary-50 px-2 py-0.5 rounded-full">低敏配方</span>
+                  </div>
+                </div>
+                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-semibold">湿粮</span>
+                    <span class="text-xs text-warm-muted">¥18/罐</span>
+                  </div>
+                  <h4 class="font-semibold text-warm-text">某品牌火鸡蔬菜罐头</h4>
+                  <p class="text-xs text-warm-muted mt-1">火鸡肉、南瓜、胡萝卜 · 无添加剂</p>
+                  <p class="text-xs text-warm-text mt-1">适合：补水、挑食、老年犬</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 商城 -->
+          <div id="discover-mall" class="discover-page">
+            <!-- 搜索 -->
+            <div class="relative mb-4">
+              <input type="text" placeholder="搜索食材、粮食..." class="w-full bg-white rounded-2xl pl-11 pr-4 py-3 shadow-card text-sm text-warm-text placeholder-warm-muted outline-none border border-primary-100">
+              <i data-lucide="search" class="w-5 h-5 text-warm-muted absolute left-4 top-1/2 -translate-y-1/2"></i>
+            </div>
+
+            <!-- 分类标签 -->
+            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+              <button class="category-pill active bg-primary-100 text-warm-text whitespace-nowrap">全部</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">鲜粮食材</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">干粮</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">湿粮</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">零食</button>
+            </div>
+
+            <!-- 鲜粮食材购买 -->
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">鲜粮食材</h3>
+              <div class="space-y-3">
+                <div class="flex gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
+                  <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=160&h=160&fit=crop" class="food-card-img">
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">鸡胸肉 500g</h4>
+                    <p class="text-xs text-warm-muted mt-1">冷冻去皮 · 人食级</p>
+                    <div class="flex items-center justify-between mt-2">
+                      <span class="text-sm font-bold text-primary-700">¥29.9</span>
+                      <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
+                  <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=160&h=160&fit=crop" class="food-card-img">
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">胡萝卜 1kg</h4>
+                    <p class="text-xs text-warm-muted mt-1">新鲜有机 · 适合犬类</p>
+                    <div class="flex items-center justify-between mt-2">
+                      <span class="text-sm font-bold text-primary-700">¥12.8</span>
+                      <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 成品粮购买 -->
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">成品粮食</h3>
+              <div class="space-y-3">
+                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">干粮</span>
+                    <span class="text-xs text-warm-muted">某品牌官方店</span>
+                  </div>
+                  <h4 class="font-semibold text-warm-text">低敏三文鱼粮 2kg</h4>
+                  <p class="text-xs text-warm-muted mt-1">三文鱼、马铃薯、豌豆 · 无谷物</p>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-sm font-bold text-primary-700">¥268</span>
+                    <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
+                  </div>
+                </div>
+                <div class="p-3 bg-white border border-primary-100 rounded-2xl">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-semibold">湿粮</span>
+                    <span class="text-xs text-warm-muted">某品牌官方店</span>
+                  </div>
+                  <h4 class="font-semibold text-warm-text">火鸡蔬菜罐头 6罐</h4>
+                  <p class="text-xs text-warm-muted mt-1">火鸡肉、南瓜、胡萝卜 · 无添加剂</p>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-sm font-bold text-primary-700">¥98</span>
+                    <button class="px-3 py-1.5 bg-primary-400 text-white text-xs font-semibold rounded-full shadow-button">去购买</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 知识库 -->
+          <div id="discover-knowledge" class="discover-page">
+            <!-- 搜索 -->
+            <div class="relative mb-4">
+              <input type="text" placeholder="搜索知识、科普、鉴别方法..." class="w-full bg-white rounded-2xl pl-11 pr-4 py-3 shadow-card text-sm text-warm-text placeholder-warm-muted outline-none border border-primary-100">
+              <i data-lucide="search" class="w-5 h-5 text-warm-muted absolute left-4 top-1/2 -translate-y-1/2"></i>
+            </div>
+
+            <!-- 鉴别指南 -->
+            <div class="section-card bg-gradient-to-br from-orange-50 to-primary-50">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-orange-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="book-open" class="w-5 h-5 text-orange-800"></i>
+                </div>
+                <h3 class="font-heading font-bold text-warm-text">轻量鉴别指南</h3>
+              </div>
+              <div class="space-y-2 text-sm text-warm-text">
+                <p class="flex items-start gap-2"><span class="text-green-600 font-bold">✓</span> 配料表前3位最好是明确肉类</p>
+                <p class="flex items-start gap-2"><span class="text-green-600 font-bold">✓</span> 避免过量谷物和诱食剂</p>
+                <p class="flex items-start gap-2"><span class="text-red-600 font-bold">✗</span> 警惕只写"肉类及其制品"</p>
+                <p class="flex items-start gap-2"><span class="text-red-600 font-bold">✗</span> 香精、BHA/BHT防腐剂尽量避开</p>
+              </div>
+            </div>
+
+            <!-- 知识库文章 -->
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">知识库</h3>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <div class="w-12 h-12 bg-primary-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="bone" class="w-6 h-6 text-primary-800"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">生骨肉入门指南</h4>
+                    <p class="text-xs text-warm-muted">5分钟读完 · 适合新手</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <div class="w-12 h-12 bg-green-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="search" class="w-6 h-6 text-green-800"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">过敏原识别手册</h4>
+                    <p class="text-xs text-warm-muted">10分钟读完 · 布丁已收藏</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <div class="w-12 h-12 bg-red-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="ban" class="w-6 h-6 text-red-800"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">食材安全速查表</h4>
+                    <p class="text-xs text-warm-muted">常见食物能不能吃</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 我的页 -->
+      <div id="page-profile" class="page">
+        <div class="nav-header">
+          <h1 class="font-heading text-2xl font-bold text-warm-text">我的</h1>
+        </div>
+
+        <div class="mt-2">
+          <!-- 用户信息 -->
+          <div class="section-card">
+            <div class="flex items-center gap-4">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop" alt="用户头像" class="w-16 h-16 rounded-full object-cover border-3 border-primary-200">
+              <div class="flex-1">
+                <h2 class="font-heading text-xl font-bold text-warm-text">布丁麻麻</h2>
+                <p class="text-sm text-warm-muted">ID: petlover_2026</p>
+              </div>
+              <button class="p-2 hover:bg-primary-50 rounded-xl transition-colors">
+                <i data-lucide="settings" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 宠物管理 -->
+          <div class="section-card">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-heading font-bold text-warm-text">宠物管理</h3>
+              <button class="text-sm text-primary-700 font-semibold flex items-center gap-1">
+                <i data-lucide="plus" class="w-4 h-4"></i> 添加宠物
+              </button>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 p-3 bg-primary-100 border-2 border-primary-400 rounded-2xl">
+                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=100&h=100&fit=crop" class="w-12 h-12 rounded-full object-cover">
+                <div class="flex-1">
+                  <p class="font-semibold text-warm-text">布丁 <span class="text-xs font-normal text-warm-muted">金毛 · 3岁</span></p>
+                  <p class="text-xs text-warm-muted">28.5kg · 当前选中</p>
+                </div>
+                <i data-lucide="check-circle" class="w-5 h-5 text-primary-600 fill-primary-100"></i>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
+                <div class="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center">
+                  <i data-lucide="cat" class="w-6 h-6 text-primary-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-warm-text">汤圆 <span class="text-xs font-normal text-warm-muted">英短 · 2岁</span></p>
+                  <p class="text-xs text-warm-muted">4.2kg</p>
+                </div>
+                <button class="text-xs text-primary-700 font-semibold">切换</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 扩展功能 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">扩展功能</h3>
+            <div class="space-y-1">
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="bell" class="w-4.5 h-4.5 text-primary-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">提醒设置</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="file-text" class="w-4.5 h-4.5 text-blue-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">体检报告导入</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="download" class="w-4.5 h-4.5 text-green-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">数据导出</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="watch" class="w-4.5 h-4.5 text-purple-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">设备管理</span>
+                </div>
+                <span class="text-xs text-warm-muted">预留</span>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="message-circle" class="w-4.5 h-4.5 text-orange-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">意见反馈</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="info" class="w-4.5 h-4.5 text-gray-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">关于我们</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 预留入口 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">后续版本</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl opacity-70">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-yellow-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="crown" class="w-4.5 h-4.5 text-yellow-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">会员/订阅</span>
+                </div>
+                <span class="text-xs text-warm-muted">即将上线</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl opacity-70">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-pink-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="users" class="w-4.5 h-4.5 text-pink-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">社区/分享</span>
+                </div>
+                <span class="text-xs text-warm-muted">即将上线</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 退出登录 -->
+          <button class="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-semibold hover:bg-red-100 transition-colors mb-4">
+            退出登录
+          </button>
+
+          <p class="text-center text-xs text-warm-muted mb-4">版本 1.0.0 · PetDiet AI</p>
+        </div>
+      </div>
+
+      <!-- 底部 Tab Bar -->
+      <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white rounded-b-[45px] bottom-tab flex items-start justify-around pt-1 pb-2 px-2 z-50">
+        <button onclick="switchTab('home')" class="tab-item active flex flex-col items-center gap-0" data-tab="home">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="home" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">首页</span>
+        </button>
+        <button onclick="switchTab('diary')" class="tab-item flex flex-col items-center gap-0" data-tab="diary">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="notebook-pen" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">日记</span>
+        </button>
+        <button onclick="switchTab('eat')" class="tab-item flex flex-col items-center gap-0" data-tab="eat">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">吃饭</span>
+        </button>
+        <button onclick="switchTab('discover')" class="tab-item flex flex-col items-center gap-0" data-tab="discover">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">发现</span>
+        </button>
+        <button onclick="switchTab('profile')" class="tab-item flex flex-col items-center gap-0" data-tab="profile">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="user" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">我的</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // 时钟
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('clock').textContent = `${hours}:${minutes}`;
+    }
+    updateClock();
+    setInterval(updateClock, 60000);
+
+    // Tab 切换
+    function switchTab(tabName) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + tabName).classList.add('active');
+
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tab-item[data-tab="' + tabName + '"]').classList.add('active');
+      lucide.createIcons();
+    }
+
+    // 吃饭页子tab切换
+    function switchEatTab(tabName) {
+      document.querySelectorAll('.eat-page').forEach(p => p.classList.remove('active'));
+      document.getElementById('eat-' + tabName).classList.add('active');
+
+      const header = event.target.closest('.nav-header');
+      header.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // 发现页子tab切换
+    function switchDiscoverTab(tabName) {
+      document.querySelectorAll('.discover-page').forEach(p => p.classList.remove('active'));
+      document.getElementById('discover-' + tabName).classList.add('active');
+
+      const header = event.target.closest('.nav-header');
+      header.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // 食记卡片展开/收起
+    function toggleNoteCard(card) {
+      card.classList.toggle('expanded');
+      lucide.createIcons();
+    }
+
+    // 日历相关
+    let calendarCurrentDate = new Date(2026, 5, 24);
+    let calendarSelectedDate = new Date(2026, 5, 24);
+
+    function toggleCalendar() {
+      const popup = document.getElementById('calendar-popup');
+      popup.classList.toggle('show');
+      if (popup.classList.contains('show')) {
+        renderCalendar();
+      }
+    }
+
+    function changeMonth(delta) {
+      calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function selectDate(year, month, day) {
+      calendarSelectedDate = new Date(year, month, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selected = new Date(year, month, day);
+      selected.setHours(0, 0, 0, 0);
+
+      const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+      document.getElementById('diary-date').textContent = `${month + 1}月${day}日`;
+      document.getElementById('diary-weekday').textContent = selected.getTime() === today.getTime() ? '今天' : `${year}年`;
+
+      document.getElementById('calendar-popup').classList.remove('show');
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = calendarCurrentDate.getFullYear();
+      const month = calendarCurrentDate.getMonth();
+      document.getElementById('calendar-month-year').textContent = `${year}年${month + 1}月`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+      const container = document.getElementById('calendar-days');
+      container.innerHTML = '';
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // 上月日期
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const day = daysInPrevMonth - i;
+        const el = document.createElement('div');
+        el.className = 'calendar-day other-month';
+        el.textContent = day;
+        el.onclick = () => selectDate(year, month - 1, day);
+        container.appendChild(el);
+      }
+
+      // 当月日期
+      for (let day = 1; day <= daysInMonth; day++) {
+        const el = document.createElement('div');
+        const date = new Date(year, month, day);
+        date.setHours(0, 0, 0, 0);
+        let className = 'calendar-day';
+        if (date.getTime() === today.getTime()) className += ' today';
+        if (date.getTime() === calendarSelectedDate.getTime()) className += ' selected';
+        el.className = className;
+        el.textContent = day;
+        el.onclick = () => selectDate(year, month, day);
+        container.appendChild(el);
+      }
+
+      // 下月日期
+      const remaining = (7 - ((firstDay + daysInMonth) % 7)) % 7;
+      for (let day = 1; day <= remaining; day++) {
+        const el = document.createElement('div');
+        el.className = 'calendar-day other-month';
+        el.textContent = day;
+        el.onclick = () => selectDate(year, month + 1, day);
+        container.appendChild(el);
+      }
+
+      lucide.createIcons();
+    }
+
+    // 点击日历外部关闭
+    const calendarPopup = document.getElementById('calendar-popup');
+    if (calendarPopup) {
+      calendarPopup.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      const popup = document.getElementById('calendar-popup');
+      const dateSelector = document.querySelector('#diary-date')?.parentElement;
+      if (popup && popup.classList.contains('show') &&
+          !popup.contains(e.target) &&
+          dateSelector && !dateSelector.contains(e.target)) {
+        popup.classList.remove('show');
+      }
+    });
+
+    // 切换开关
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        this.classList.toggle('on');
+      });
+    });
+
+    // 分类 pill 切换
+    document.querySelectorAll('.category-pill').forEach(pill => {
+      pill.addEventListener('click', function() {
+        this.parentElement.querySelectorAll('.category-pill').forEach(p => {
+          p.classList.remove('active', 'bg-primary-100');
+          p.classList.add('bg-white', 'shadow-card');
+        });
+        this.classList.add('active', 'bg-primary-100');
+        this.classList.remove('bg-white', 'shadow-card');
+      });
+    });
+
+    // Chart.js 图表
+    const chartColors = {
+      primary: '#FBBF24',
+      primaryLight: '#FDE68A',
+      orange: '#FB923C',
+      green: '#4ADE80',
+      blue: '#60A5FA',
+      text: '#451A03'
+    };
+
+    // 体重曲线
+    const weightCtx = document.getElementById('weightChart');
+    if (weightCtx) {
+      new Chart(weightCtx, {
+        type: 'bar',
+        data: {
+          labels: ['5/25', '5/30', '6/4', '6/9', '6/14', '6/19', '6/24'],
+          datasets: [
+            {
+              label: '体重(kg)',
+              data: [29.2, 29.0, 28.9, 28.7, 28.6, 28.5, 28.5],
+              type: 'line',
+              borderColor: chartColors.primary,
+              backgroundColor: '#FFF',
+              borderWidth: 2.5,
+              pointBackgroundColor: '#FFF',
+              pointBorderColor: chartColors.primary,
+              pointBorderWidth: 2,
+              pointRadius: 5,
+              tension: 0.3,
+              yAxisID: 'y-weight',
+              order: 1
+            },
+            {
+              label: '食量(g)',
+              data: [420, 520, 380, 460, 390, 430, 450],
+              type: 'bar',
+              backgroundColor: chartColors.primaryLight,
+              hoverBackgroundColor: chartColors.primary,
+              borderRadius: 6,
+              barThickness: 16,
+              yAxisID: 'y-food',
+              order: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                pointStyle: 'circle',
+                color: chartColors.text,
+                font: { size: 11 }
+              }
+            }
+          },
+          scales: {
+            'y-weight': {
+              type: 'linear',
+              position: 'right',
+              min: 28,
+              max: 30,
+              grid: { display: false },
+              ticks: { color: chartColors.text, font: { size: 10 } },
+              title: { display: true, text: 'kg', color: '#92400E', font: { size: 9 } }
+            },
+            'y-food': {
+              type: 'linear',
+              position: 'left',
+              min: 0,
+              max: 600,
+              grid: { color: 'rgba(251, 191, 36, 0.1)' },
+              ticks: { color: chartColors.text, font: { size: 10 } },
+              title: { display: true, text: 'g', color: '#92400E', font: { size: 9 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: chartColors.text, font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // 饮食结构饼图
+    const dietCtx = document.getElementById('dietChart');
+    if (dietCtx) {
+      new Chart(dietCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['主粮', '鲜粮', '零食'],
+          datasets: [{
+            data: [55, 35, 10],
+            backgroundColor: [chartColors.primary, chartColors.orange, chartColors.green],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { color: chartColors.text, font: { size: 10 }, boxWidth: 10 }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
