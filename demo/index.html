@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PetDiet AI - 宠物饮食健康助手</title>
+  <title>宠食记 PetDiet AI - 宠物饮食健康助手</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -131,6 +131,154 @@
       border-bottom-left-radius: 4px;
       box-shadow: 0 2px 8px rgba(120,53,15,0.08);
     }
+    /* DeepSeek/Kimi 风格的AI回复样式 */
+    .ai-response {
+      padding: 0 16px;
+      line-height: 1.7;
+      font-size: 15px;
+      color: #1F2937;
+      text-align: left;
+      margin: 0;
+    }
+    .ai-response h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      margin: 20px 0 12px 0;
+      padding: 0;
+      text-align: left;
+    }
+    .ai-response p {
+      margin: 8px 0;
+      padding: 0;
+      text-align: left;
+    }
+    .ai-response ol, .ai-response ul {
+      margin: 12px 0;
+      padding-left: 0;
+      text-align: left;
+      list-style-position: inside;
+    }
+    .ai-response li {
+      margin: 8px 0;
+      padding: 0;
+      text-align: left;
+    }
+    .ai-response .highlight-num {
+      color: #D97706;
+      font-weight: 600;
+    }
+    .ai-response .warning-text {
+      margin: 16px 0 0 0;
+      font-size: 14px;
+      color: #6B7280;
+      text-align: left;
+    }
+    .ai-response .recipe-card {
+      margin: 16px 0;
+      padding: 0;
+      background: #FFFBEB;
+      border-radius: 16px;
+      text-align: left;
+    }
+    .ai-response .recipe-card .recipe-section {
+      font-weight: 600;
+      font-size: 14px;
+      color: #451A03;
+      margin: 12px 0 6px 0;
+      text-align: left;
+    }
+    .ai-response .recipe-card .recipe-section {
+      font-weight: 600;
+      font-size: 14px;
+      color: #451A03;
+      margin: 12px 0 6px 0;
+      text-align: left;
+    }
+    .ai-response .recipe-card ol {
+      margin: 0;
+      padding-left: 0;
+      text-align: left;
+      list-style-position: inside;
+    }
+    .ai-response .recipe-card li {
+      font-size: 14px;
+      color: #451A03;
+      margin: 8px 0;
+      padding: 0;
+    }
+    .ai-response .recipe-tip {
+      margin: 12px 0 0 0;
+      font-size: 13px;
+      color: #92400E;
+    }
+    .ai-response .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin: 20px 0 12px 0;
+      text-align: left;
+    }
+    .ai-response .divider {
+      border: none;
+      border-top: 1px solid #E5E7EB;
+      margin: 16px 0;
+    }
+    .ai-response table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .ai-response th {
+      background: #FEF3C7;
+      color: #92400E;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 2px solid #FDE68A;
+    }
+    .ai-response td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #F3F4F6;
+      color: #374151;
+      text-align: left;
+    }
+    .ai-response tr:last-child td {
+      border-bottom: none;
+    }
+    .ai-response .highlight-text {
+      font-weight: 700;
+      color: #111827;
+    }
+    .ai-response .tip-box {
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: #FFFBEB;
+      border-radius: 12px;
+      border-left: 3px solid #FBBF24;
+      font-size: 14px;
+      color: #92400E;
+    }
+    .ai-response .tip-box strong {
+      font-weight: 700;
+    }
+    .ai-response .warning-table {
+      margin: 16px 0;
+    }
+    .ai-response .warning-table th {
+      background: #FEF2F2;
+      color: #DC2626;
+    }
+    .ai-response .final-tip {
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: #F3F4F6;
+      border-radius: 12px;
+      font-size: 14px;
+      color: #374151;
+      text-align: left;
+    }
     .chip {
       display: inline-flex;
       align-items: center;
@@ -209,34 +357,99 @@
       transform: translateX(-50%) translateY(0);
       opacity: 1;
     }
+    .chat-input-wrapper {
       position: absolute;
       bottom: 70px;
       left: 0;
       right: 0;
       background: #FFFBEB;
-      padding: 8px 16px 12px 16px;
+      padding: 10px 16px 16px 16px;
       z-index: 40;
     }
-    .chat-input-bar {
+    .skill-pills-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .skill-pills-row::-webkit-scrollbar { display: none; }
+    .skill-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
       background: #FFFFFF;
-      border: 1px solid #FDE68A;
-      border-radius: 28px;
-      padding: 8px 12px;
+      border: 1px solid #E5E7EB;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      flex-shrink: 0;
+    }
+    .skill-pill:active {
+      background: #F3F4F6;
+      transform: scale(0.98);
+    }
+    .chat-input-container {
       display: flex;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 2px 12px rgba(251, 191, 36, 0.1);
+      background: #FEF3C7;
+      border-radius: 24px;
+      padding: 6px 8px 6px 6px;
+      gap: 8px;
     }
-    .chat-input-bar input {
+    .chat-mic-btn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    .chat-mic-btn:active {
+      transform: scale(0.95);
+      background: #F9FAFB;
+    }
+    .chat-text-input {
       flex: 1;
       background: transparent;
       border: none;
       outline: none;
       font-size: 15px;
-      color: #1F2937;
+      color: #111827;
+      padding: 8px 4px;
     }
-    .chat-input-bar input::placeholder {
+    .chat-text-input::placeholder {
       color: #9CA3AF;
+    }
+    .chat-plus-btn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      background: #FBBF24;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+    }
+    .chat-plus-btn:active {
+      transform: scale(0.95);
+      background: #F59E0B;
     }
     .suggestion-card {
       background: #FFFFFF;
@@ -885,24 +1098,149 @@
         <div class="mt-2">
           <!-- AI讨论子页面 -->
           <div id="eat-chat" class="eat-page active">
-            <div class="space-y-4 mb-44">
-              <div class="flex gap-3">
-                <div class="w-8 h-8 rounded-full bg-primary-200 flex items-center justify-center flex-shrink-0">
-                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-700"></i>
-                </div>
-                <div class="message-bubble message-ai">
-                  <p>嗨！我是你的宠物饮食助手，告诉我你想了解什么？</p>
+            <div id="chat-messages" class="space-y-5 mb-44">
+              <!-- 用户消息1：柯基食谱（放在最上面） -->
+              <div class="flex justify-end">
+                <div class="message-bubble message-user">
+                  <p>我现在想要给一只成年的柯基（自己的爱宠）做一个有关于"南瓜鸡肉粥"的宠物食谱，你能告诉我买什么食材、以及怎么做呢？</p>
                 </div>
               </div>
 
-              <div class="flex gap-3 justify-end">
+              <!-- AI思考卡片1 -->
+              <div class="suggestion-card mb-3">
+                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="lightbulb" class="w-4 h-4 text-primary-600"></i>
+                </div>
+                <span class="text-sm text-warm-text flex-1">成年柯基专属南瓜鸡肉粥方案</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </div>
+
+              <!-- AI回复1：完整结构化食谱 -->
+              <div class="ai-response">
+                <p>好的，给你一份<strong>成年柯基专属的南瓜鸡肉粥</strong>食谱。以一只标准体重（约10–12kg）的成年柯基为例，这是一顿<strong>温和、低敏、护肠胃</strong>的自制主食。</p>
+
+                <hr class="divider">
+
+                <p class="section-title">🛒 食材清单（一顿量，约200g成品）</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>食材</th>
+                      <th>分量</th>
+                      <th>作用</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>鸡胸肉</strong>（去皮去骨）</td>
+                      <td>80g</td>
+                      <td>优质蛋白，低脂肪</td>
+                    </tr>
+                    <tr>
+                      <td><strong>南瓜</strong>（去皮去籽）</td>
+                      <td>60g</td>
+                      <td>膳食纤维+β-胡萝卜素，护肠胃</td>
+                    </tr>
+                    <tr>
+                      <td><strong>大米或糙米</strong></td>
+                      <td>25g（生重）</td>
+                      <td>碳水供能，糙米纤维更高</td>
+                    </tr>
+                    <tr>
+                      <td><strong>胡萝卜</strong>（可选）</td>
+                      <td>20g</td>
+                      <td>维生素A，增加甜味</td>
+                    </tr>
+                    <tr>
+                      <td><strong>纯净水</strong></td>
+                      <td>约250ml</td>
+                      <td>煮粥用</td>
+                    </tr>
+                    <tr>
+                      <td><strong>蛋壳粉/碳酸钙粉</strong></td>
+                      <td>1g（约1/4茶匙）</td>
+                      <td>⚠️ 必须加，补充钙质</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="tip-box">
+                  <strong>💡 没有大米？</strong> 可以用剩米饭直接加水煮，更省事。
+                </div>
+
+                <hr class="divider">
+
+                <p class="section-title">👨‍🍳 制作步骤</p>
+
+                <ol>
+                  <li><strong>备料</strong>：鸡肉切小块（指甲盖大小），南瓜和胡萝卜去皮去籽切丁，大米洗净。</li>
+                  <li><strong>煮米</strong>：大米加水，大火煮开后转小火煮10分钟至半开花。</li>
+                  <li><strong>下南瓜</strong>：加入南瓜丁、胡萝卜丁，继续煮10分钟至软烂。</li>
+                  <li><strong>下鸡肉</strong>：加入鸡肉丁，搅拌开，煮5–8分钟至鸡肉完全变白熟透（<strong>不要带生</strong>）。</li>
+                  <li><strong>收汁</strong>：煮至粥状、汤汁浓稠即可。如果太稀就多煮一会儿，太稠就加点水。</li>
+                  <li><strong>冷却</strong>：关火后放凉至<strong>室温或微温</strong>（约35°C），撒入蛋壳粉拌匀。</li>
+                </ol>
+
+                <hr class="divider">
+
+                <p class="section-title">🐶 喂食建议</p>
+
+                <ul>
+                  <li><strong>一顿喂量</strong>：成年柯基一顿约 <strong>150–200g</strong> 湿粮（根据当天运动量调整）。</li>
+                  <li><strong>喂食频率</strong>：如果当作主食，建议 <strong>一天两顿</strong>（早晚各一份）。</li>
+                  <li><strong>保存</strong>：现做现吃最好。冷藏可存2天，吃前务必加热至温热。</li>
+                </ul>
+
+                <hr class="divider">
+
+                <p class="section-title">⚠️ 重要提醒</p>
+
+                <table class="warning-table">
+                  <thead>
+                    <tr>
+                      <th>❌ 不要加</th>
+                      <th>✅ 必须注意</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>盐、酱油、调味料</td>
+                      <td>任何调味料对狗肾脏都是负担</td>
+                    </tr>
+                    <tr>
+                      <td>洋葱、大蒜、葱</td>
+                      <td>对狗有毒，绝对禁止</td>
+                    </tr>
+                    <tr>
+                      <td>南瓜籽和皮</td>
+                      <td>皮难消化，籽可能卡喉咙</td>
+                    </tr>
+                    <tr>
+                      <td>鸡骨头</td>
+                      <td>熟鸡骨易碎裂划伤肠道</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="final-tip">
+                  <strong>长期吃自制粮的柯基</strong>：这碗粥营养不全面，<strong>每周至少3–4天要搭配商业狗粮或额外补充</strong>：钙粉、少量鱼油（Omega-3）、以及动物内脏（如鸡肝每周10g）。否则长期会缺微量元素。
+                </div>
+
+                <hr class="divider">
+
+                <p>如果你想让布丁长期吃自制，你需要生成更精确的每周食谱（包括钙粉、鱼油、内脏的配比）。需要我帮你算一下它现在的每日热量需求吗？</p>
+              </div>
+
+              <!-- 用户消息2 -->
+              <div class="flex justify-end">
                 <div class="message-bubble message-user">
                   <p>布丁最近有点软便，该吃什么？</p>
                 </div>
               </div>
 
-              <!-- AI 深度思考/推荐卡片 -->
-              <div class="suggestion-card mb-2">
+              <!-- AI回复2：深度思考卡片 -->
+              <div class="suggestion-card mb-3">
                 <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
                   <i data-lucide="lightbulb" class="w-4 h-4 text-primary-600"></i>
                 </div>
@@ -910,47 +1248,48 @@
                 <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
               </div>
 
-              <div class="flex gap-3">
-                <div class="w-8 h-8 rounded-full bg-primary-200 flex items-center justify-center flex-shrink-0">
-                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-700"></i>
-                </div>
-                <div class="message-bubble message-ai">
-                  <p class="font-semibold text-base mb-2">软便期间饮食建议</p>
-                  <ol class="space-y-2 text-sm ml-4 list-decimal">
-                    <li>暂停零食和新的食物</li>
-                    <li>选择易消化的主食：白鸡肉+南瓜+白米饭</li>
-                    <li>少量多餐，每餐减至平时的70%</li>
-                    <li>保证充足饮水</li>
-                  </ol>
-                  <div class="mt-3 p-2.5 bg-red-50 rounded-xl">
-                    <p class="text-xs text-red-700">若持续超过24小时或伴有呕吐，请及时咨询兽医</p>
-                  </div>
-                </div>
+              <!-- AI回复：文档流式样式 -->
+              <div class="ai-response">
+                <h3>软便期间饮食建议</h3>
+                <ol>
+                  <li><span class="highlight-num">1.</span> 暂停零食和新的食物</li>
+                  <li><span class="highlight-num">2.</span> 选择易消化的主食：白鸡肉+南瓜+白米饭</li>
+                  <li><span class="highlight-num">3.</span> 少量多餐，每餐减至平时的70%</li>
+                  <li><span class="highlight-num">4.</span> 保证充足饮水</li>
+                </ol>
+                <p class="warning-text">若持续超过24小时或伴有呕吐，请及时咨询兽医。</p>
               </div>
 
-              <div class="flex gap-3 justify-end">
+              <!-- 用户消息3 -->
+              <div class="flex justify-end">
                 <div class="message-bubble message-user">
                   <p>南瓜鸡肉粥怎么做？</p>
                 </div>
               </div>
 
-              <div class="flex gap-3">
-                <div class="w-8 h-8 rounded-full bg-primary-200 flex items-center justify-center flex-shrink-0">
-                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-700"></i>
+              <!-- AI思考卡片3 -->
+              <div class="suggestion-card mb-3">
+                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="lightbulb" class="w-4 h-4 text-primary-600"></i>
                 </div>
-                <div class="message-bubble message-ai">
-                  <p class="font-semibold text-base mb-2">南瓜鸡肉粥食谱</p>
-                  <div class="bg-primary-50 rounded-xl p-3">
-                    <p class="text-sm"><span class="font-semibold">食材：</span>鸡胸肉150g、南瓜100g、糙米50g</p>
-                    <p class="text-sm mt-2 font-semibold">步骤：</p>
-                    <ol class="text-sm space-y-1.5 ml-4 list-decimal">
-                      <li>鸡肉切丁焯水去沫</li>
-                      <li>南瓜去皮切块蒸软</li>
-                      <li>糙米煮成粥后加入食材</li>
-                      <li>小火煮15分钟至软烂</li>
-                    </ol>
-                  </div>
-                  <p class="text-xs text-warm-muted mt-2">适合软便恢复期，可保存到食记</p>
+                <span class="text-sm text-warm-text flex-1">南瓜鸡肉粥制作方案</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </div>
+
+              <!-- AI回复3：食谱卡片 -->
+              <div class="ai-response">
+                <h3>南瓜鸡肉粥食谱</h3>
+                <div class="recipe-card">
+                  <p class="recipe-section">食材：</p>
+                  <p>鸡胸肉150g、南瓜100g、糙米50g</p>
+                  <p class="recipe-section">步骤：</p>
+                  <ol>
+                    <li>鸡肉切丁焯水去沫</li>
+                    <li>南瓜去皮切块蒸软</li>
+                    <li>糙米煮成粥后加入食材</li>
+                    <li>小火煮15分钟至软烂</li>
+                  </ol>
+                  <p class="recipe-tip">适合软便恢复期，可保存到食记</p>
                 </div>
               </div>
             </div>
@@ -962,8 +1301,8 @@
 
             <!-- Skill 选择栏 + 输入栏 -->
             <div class="chat-input-wrapper">
-              <!-- 可滑动的 Skill 选择 -->
-              <div class="flex gap-2 mb-1 overflow-x-auto pb-1 scrollbar-hide">
+              <!-- 快捷标签行 -->
+              <div class="skill-pills-row">
                 <button class="skill-pill">
                   <i data-lucide="chef-hat" class="w-4 h-4 text-gray-500"></i>
                   食谱规划
@@ -986,17 +1325,16 @@
                 </button>
               </div>
 
-              <!-- 输入栏 -->
-              <div class="chat-input-bar">
-                <button class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center transition-colors">
+              <!-- 输入框容器 -->
+              <div class="chat-input-container">
+                <button id="mic-btn" class="chat-mic-btn">
                   <i data-lucide="mic" class="w-5 h-5 text-gray-600"></i>
                 </button>
-                <input type="text" placeholder="尽管问，带图也行">
-                <button class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center transition-colors">
-                  <i data-lucide="plus" class="w-5 h-5 text-gray-600"></i>
+                <input id="chat-input" type="text" class="chat-text-input" placeholder="尽管问，带图也行">
+                <button id="send-btn" class="chat-plus-btn">
+                  <i data-lucide="plus" class="w-5 h-5 text-white"></i>
                 </button>
               </div>
-
             </div>
           </div>
 
@@ -2042,6 +2380,7 @@
       });
     }
   </script>
+  <script src="chat.js"></script>
   <div id="toast" class="toast"></div>
 </body>
 </html>
