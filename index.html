@@ -1,0 +1,2671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>宠食记 PetDiet AI - 宠物饮食健康助手</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#FFFBEB',
+              100: '#FEF3C7',
+              200: '#FDE68A',
+              300: '#FCD34D',
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+              700: '#B45309',
+              800: '#92400E',
+              900: '#78350F',
+            },
+            warm: {
+              cream: '#FFFDF7',
+              card: '#FFFFFF',
+              text: '#451A03',
+              muted: '#92400E',
+              border: '#FDE68A',
+            }
+          },
+          fontFamily: {
+            heading: ['Varela Round', 'sans-serif'],
+            body: ['Nunito Sans', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(251, 191, 36, 0.15)',
+            'card': '0 2px 12px rgba(120, 53, 15, 0.08)',
+            'button': '0 4px 12px rgba(245, 158, 11, 0.25)',
+            'tab': '0 -2px 20px rgba(120, 53, 15, 0.06)',
+          },
+          borderRadius: {
+            '2xl': '1rem',
+            '3xl': '1.5rem',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Nunito Sans', sans-serif;
+      background: #F5F0E8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .iphone-frame {
+      width: 393px;
+      height: 852px;
+      background: #000;
+      border-radius: 55px;
+      padding: 12px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      background: #FFFBEB;
+      border-radius: 45px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 37px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+    .page {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 95px 16px 100px 16px;
+      scrollbar-width: none;
+    }
+    .page.active { display: block; }
+    .page::-webkit-scrollbar { display: none; }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .font-heading { font-family: 'Varela Round', sans-serif; }
+    .tab-item { transition: all 0.2s ease; padding: 4px 8px; border-radius: 16px; }
+    .tab-item.active { color: #D97706; background: #FEF3C7; }
+    .tab-item.active .tab-icon { background: transparent; }
+    .message-bubble {
+      max-width: 78%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .message-user {
+      background: #FBBF24;
+      color: #451A03;
+      border-bottom-right-radius: 4px;
+    }
+    .message-ai {
+      background: #FFFFFF;
+      color: #451A03;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(120,53,15,0.08);
+    }
+    /* DeepSeek/Kimi 风格的AI回复样式 */
+    .ai-response {
+      padding: 0 16px;
+      line-height: 1.7;
+      font-size: 15px;
+      color: #1F2937;
+      text-align: left;
+      margin: 0;
+    }
+    .ai-response h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      margin: 20px 0 12px 0;
+      padding: 0;
+      text-align: left;
+    }
+    .ai-response p {
+      margin: 8px 0;
+      padding: 0;
+      text-align: left;
+    }
+    .ai-response ol, .ai-response ul {
+      margin: 12px 0;
+      padding-left: 0;
+      text-align: left;
+      list-style-position: inside;
+    }
+    .ai-response li {
+      margin: 8px 0;
+      padding: 0;
+      text-align: left;
+    }
+    .ai-response .highlight-num {
+      color: #D97706;
+      font-weight: 600;
+    }
+    .ai-response .warning-text {
+      margin: 16px 0 0 0;
+      font-size: 14px;
+      color: #6B7280;
+      text-align: left;
+    }
+    .ai-response .recipe-card {
+      margin: 16px 0;
+      padding: 0;
+      background: #FFFBEB;
+      border-radius: 16px;
+      text-align: left;
+    }
+    .ai-response .recipe-card .recipe-section {
+      font-weight: 600;
+      font-size: 14px;
+      color: #451A03;
+      margin: 12px 0 6px 0;
+      text-align: left;
+    }
+    .ai-response .recipe-card .recipe-section {
+      font-weight: 600;
+      font-size: 14px;
+      color: #451A03;
+      margin: 12px 0 6px 0;
+      text-align: left;
+    }
+    .ai-response .recipe-card ol {
+      margin: 0;
+      padding-left: 0;
+      text-align: left;
+      list-style-position: inside;
+    }
+    .ai-response .recipe-card li {
+      font-size: 14px;
+      color: #451A03;
+      margin: 8px 0;
+      padding: 0;
+    }
+    .ai-response .recipe-tip {
+      margin: 12px 0 0 0;
+      font-size: 13px;
+      color: #92400E;
+    }
+    .ai-response .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin: 20px 0 12px 0;
+      text-align: left;
+    }
+    .ai-response .divider {
+      border: none;
+      border-top: 1px solid #E5E7EB;
+      margin: 16px 0;
+    }
+    .ai-response table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .ai-response th {
+      background: #FEF3C7;
+      color: #92400E;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 2px solid #FDE68A;
+    }
+    .ai-response td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #F3F4F6;
+      color: #374151;
+      text-align: left;
+    }
+    .ai-response tr:last-child td {
+      border-bottom: none;
+    }
+    .ai-response .highlight-text {
+      font-weight: 700;
+      color: #111827;
+    }
+    .ai-response .tip-box {
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: #FFFBEB;
+      border-radius: 12px;
+      border-left: 3px solid #FBBF24;
+      font-size: 14px;
+      color: #92400E;
+    }
+    .ai-response .tip-box strong {
+      font-weight: 700;
+    }
+    .ai-response .warning-table {
+      margin: 16px 0;
+    }
+    .ai-response .warning-table th {
+      background: #FEF2F2;
+      color: #DC2626;
+    }
+    .ai-response .final-tip {
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: #F3F4F6;
+      border-radius: 12px;
+      font-size: 14px;
+      color: #374151;
+      text-align: left;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .input-bar {
+      border: 1px solid #FDE68A;
+      box-shadow: 0 2px 12px rgba(251, 191, 36, 0.1);
+    }
+    .skill-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #4B5563;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      flex-shrink: 0;
+    }
+    .skill-pill:active {
+      background: #F3F4F6;
+      transform: scale(0.98);
+    }
+    .ai-cart-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+      color: #451A03;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+      border: none;
+    }
+    .ai-cart-btn:active { transform: scale(0.98); }
+    .ai-cart-btn.added {
+      background: linear-gradient(135deg, #4ADE80 0%, #22C55E 100%);
+      color: white;
+    }
+    .toast {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: rgba(69, 26, 3, 0.95);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 200;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .chat-input-wrapper {
+      position: absolute;
+      bottom: 70px;
+      left: 0;
+      right: 0;
+      background: #FFFBEB;
+      padding: 10px 16px 16px 16px;
+      z-index: 40;
+    }
+    .skill-pills-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .skill-pills-row::-webkit-scrollbar { display: none; }
+    .skill-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      flex-shrink: 0;
+    }
+    .skill-pill:active {
+      background: #F3F4F6;
+      transform: scale(0.98);
+    }
+    .chat-input-container {
+      display: flex;
+      align-items: center;
+      background: #FEF3C7;
+      border-radius: 24px;
+      padding: 6px 8px 6px 6px;
+      gap: 8px;
+    }
+    .chat-mic-btn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    .chat-mic-btn:active {
+      transform: scale(0.95);
+      background: #F9FAFB;
+    }
+    .chat-text-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #111827;
+      padding: 8px 4px;
+    }
+    .chat-text-input::placeholder {
+      color: #9CA3AF;
+    }
+    .chat-plus-btn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      background: #FBBF24;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+    }
+    .chat-plus-btn:active {
+      transform: scale(0.95);
+      background: #F59E0B;
+    }
+    .suggestion-card {
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      border-radius: 16px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 4px rgba(120, 53, 15, 0.04);
+    }
+    .suggestion-card:active {
+      background: #FFFBEB;
+    }
+    .scroll-to-bottom {
+      position: absolute;
+      right: 16px;
+      bottom: 210px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid #FDE68A;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(120, 53, 15, 0.08);
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .scroll-to-bottom:active {
+      transform: scale(0.95);
+    }
+    .section-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 2px 12px rgba(120, 53, 15, 0.06);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .pet-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #FEF3C7;
+    }
+    .chart-container {
+      position: relative;
+      height: 160px;
+      width: 100%;
+    }
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #FBBF24;
+      border: 2px solid #FFF;
+      box-shadow: 0 0 0 2px #FDE68A;
+    }
+    .quick-btn {
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .quick-btn:active {
+      transform: scale(0.97);
+    }
+    .category-pill {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .category-pill.active {
+      background: #FBBF24;
+      color: #451A03;
+    }
+    .mall-grid-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .mall-grid-icon:active { transform: scale(0.95); }
+    .mall-grid-icon .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .mall-grid-icon .icon-label {
+      font-size: 11px;
+      color: #451A03;
+      font-weight: 500;
+    }
+    .mall-product-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(120, 53, 15, 0.06);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .mall-product-card:active { transform: scale(0.98); }
+    .mall-search-bar {
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      border-radius: 24px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mall-search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: #451A03;
+    }
+    .mall-search-bar input::placeholder { color: #92400E; opacity: 0.5; }
+    .waterfall {
+      column-count: 2;
+      column-gap: 12px;
+    }
+    .waterfall-item {
+      break-inside: avoid;
+      margin-bottom: 12px;
+      background: #FFFFFF;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(120, 53, 15, 0.06);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .waterfall-item:active { transform: scale(0.98); }
+    .waterfall-item img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .waterfall-content {
+      padding: 12px;
+    }
+    .waterfall-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #451A03;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .waterfall-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .waterfall-tag {
+      padding: 3px 8px;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+      font-size: 10px;
+      color: #92400E;
+      font-weight: 500;
+    }
+    .bottom-tab {
+      box-shadow: 0 -4px 24px rgba(120, 53, 15, 0.08);
+    }
+    .sub-tab {
+      position: relative;
+      padding-bottom: 8px;
+      font-weight: 600;
+      color: #92400E;
+      opacity: 0.6;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sub-tab.active {
+      opacity: 1;
+      color: #D97706;
+    }
+    #page-home { padding-top: 60px; }
+    #page-diary { padding-top: 60px; }
+    .sub-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20%;
+      right: 20%;
+      height: 3px;
+      background: #FBBF24;
+      border-radius: 3px;
+    }
+    .eat-page { display: none; }
+    .eat-page.active { display: block; }
+    .discover-page { display: none; }
+    .discover-page.active { display: block; }
+    .note-card { cursor: pointer; transition: all 0.2s; }
+    .note-card:active { transform: scale(0.99); }
+    .note-detail {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #FDE68A;
+    }
+    .note-card.expanded .note-detail { display: block; }
+    .expand-icon { transition: transform 0.2s; }
+    .note-card.expanded .expand-icon { transform: rotate(180deg); }
+    .toggle-switch {
+      width: 48px;
+      height: 28px;
+      background: #FDE68A;
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .toggle-switch.on {
+      background: #FBBF24;
+    }
+    .toggle-switch.on::after {
+      transform: translateX(20px);
+    }
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 54px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 14px 28px 0 28px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #451A03;
+      z-index: 90;
+      background: #FFFBEB;
+      pointer-events: none;
+    }
+    .calendar-popup {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 16px;
+      right: 16px;
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 8px 30px rgba(120, 53, 15, 0.12);
+      z-index: 100;
+      display: none;
+    }
+    .calendar-popup.show { display: block; }
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #451A03;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .calendar-day:hover { background: #FFFBEB; }
+    .calendar-day.selected { background: #FBBF24; color: #451A03; font-weight: 700; }
+    .calendar-day.other-month { color: #D1D5DB; }
+    .calendar-day.today { border: 1.5px solid #FBBF24; }
+    .nav-header {
+      position: absolute;
+      top: 54px;
+      left: 0;
+      right: 0;
+      padding: 0 20px 8px 20px;
+      background: #FFFBEB;
+      z-index: 80;
+      border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+    }
+    @media (max-width: 430px) {
+      body { padding: 0; }
+      .iphone-frame {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 0;
+      }
+      .iphone-screen { border-radius: 0; }
+      .dynamic-island { display: none; }
+    }
+
+    /* ===== 购物车面板 ===== */
+    .cart-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 200;
+      display: none; align-items: flex-end;
+    }
+    .cart-overlay.show { display: flex; }
+    .cart-panel {
+      width: 100%; max-height: 85%; background: #FFFDF7;
+      border-radius: 24px 24px 0 0; overflow-y: auto;
+      padding: 0 0 80px 0; scrollbar-width: none;
+    }
+    .cart-panel::-webkit-scrollbar { display: none; }
+    .cart-header {
+      position: sticky; top: 0; z-index: 10;
+      background: #FFFDF7; padding: 20px 20px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #FDE68A;
+    }
+    .cart-header h2 { font-family: 'Varela Round', sans-serif; font-size: 18px; font-weight: 700; color: #451A03; }
+    .cart-header .cart-badge {
+      background: #FBBF24; color: #451A03; font-size: 12px; font-weight: 700;
+      padding: 2px 10px; border-radius: 12px;
+    }
+    .cart-body { padding: 16px; }
+    .cart-item-card {
+      background: #FFFFFF; border-radius: 16px; padding: 16px;
+      margin-bottom: 12px; box-shadow: 0 2px 12px rgba(120,53,15,0.06);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .cart-item-card.expanded { box-shadow: 0 4px 20px rgba(120,53,15,0.12); }
+    .cart-item-row { display: flex; align-items: center; gap: 12px; }
+    .cart-item-img {
+      width: 56px; height: 56px; border-radius: 14px; object-fit: cover;
+      background: #FEF3C7; flex-shrink: 0;
+    }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-size: 14px; font-weight: 700; color: #451A03; margin-bottom: 4px; }
+    .cart-item-meta { font-size: 12px; color: #92400E; }
+    .cart-item-price { text-align: right; flex-shrink: 0; }
+    .cart-item-price .price-main { font-size: 18px; font-weight: 700; color: #D97706; }
+    .cart-item-price .price-sub { font-size: 11px; color: #92400E; }
+    .cart-expand-icon { transition: transform 0.2s; margin-left: 6px; }
+    .cart-item-card.expanded .cart-expand-icon { transform: rotate(180deg); }
+
+    /* 比价面板 */
+    .cart-compare { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #FDE68A; }
+    .cart-item-card.expanded .cart-compare { display: block; }
+    .cart-compare h4 { font-size: 13px; font-weight: 700; color: #451A03; margin-bottom: 10px; }
+    .platform-list { display: flex; flex-direction: column; gap: 8px; }
+    .platform-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      background: #FFFBEB; border-radius: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .platform-row:active { background: #FEF3C7; transform: scale(0.98); }
+    .platform-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .platform-name { flex: 1; font-size: 13px; font-weight: 600; color: #451A03; }
+    .platform-price { font-size: 15px; font-weight: 700; color: #D97706; }
+    .platform-tag {
+      font-size: 10px; padding: 2px 8px; border-radius: 8px;
+      font-weight: 600; flex-shrink: 0;
+    }
+
+    /* AI总结 & 购买注意 */
+    .cart-ai-note {
+      margin-top: 12px; padding: 12px; background: #F0F9FF;
+      border-radius: 12px; border-left: 3px solid #60A5FA;
+    }
+    .cart-ai-note .note-title { font-size: 12px; font-weight: 700; color: #1E40AF; margin-bottom: 6px; }
+    .cart-ai-note .note-text { font-size: 12px; color: #1E3A5F; line-height: 1.6; }
+    .cart-warning {
+      margin-top: 8px; padding: 10px 12px; background: #FEF2F2;
+      border-radius: 10px; border-left: 3px solid #EF4444;
+    }
+    .cart-warning .warn-text { font-size: 11px; color: #DC2626; line-height: 1.5; }
+
+    .cart-empty { text-align: center; padding: 40px 20px; color: #92400E; }
+    .cart-empty i { color: #FDE68A; margin-bottom: 12px; }
+
+    /* 食物准备板块 */
+    .food-prep-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 6px; }
+    .food-prep-card {
+      background: #FFFFFF; border-radius: 14px; padding: 14px 10px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 1px 6px rgba(120,53,15,0.06); border: 1px solid #FEF3C7;
+    }
+    .food-prep-card:active { transform: scale(0.97); background: #FFFBEB; }
+    .food-prep-card .fp-icon {
+      width: 42px; height: 42px; border-radius: 12px; margin: 0 auto 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .food-prep-card .fp-title { font-size: 12px; font-weight: 600; color: #451A03; }
+    .food-prep-card .fp-sub { font-size: 10px; color: #92400E; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="iphone-frame">
+    <div class="iphone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span id="clock">9:41</span>
+        <div class="flex gap-1.5 items-center">
+          <i data-lucide="signal" class="w-4 h-4"></i>
+          <i data-lucide="wifi" class="w-4 h-4"></i>
+          <i data-lucide="battery-full" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- 首页 -->
+      <div id="page-home" class="page active">
+
+        <div class="mt-2">
+          <!-- 宠物档案卡 -->
+          <div class="section-card !p-4">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200&h=200&fit=crop" alt="宠物头像" class="pet-avatar">
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary-400 rounded-full flex items-center justify-center">
+                  <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-warm-text"></i>
+                </div>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <h2 class="font-heading text-xl font-bold text-warm-text">布丁</h2>
+                  <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">金毛 · 3岁</span>
+                </div>
+                <p class="text-sm text-warm-muted mt-1">♂ 已绝育 · 28.5kg</p>
+                <div class="flex gap-2 mt-2 flex-wrap">
+                  <span class="px-2 py-1 bg-red-50 text-red-700 text-xs rounded-lg font-medium">鸡肉过敏</span>
+                  <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg font-medium">关节养护</span>
+                </div>
+              </div>
+              <button class="p-2 hover:bg-primary-50 rounded-xl transition-colors">
+                <i data-lucide="pencil" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 今日摘要 -->
+          <div class="section-card">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-heading text-lg font-bold text-warm-text">今日摘要</h3>
+              <span class="text-xs text-primary-700 font-semibold">今日评分 86</span>
+            </div>
+            <div class="space-y-3">
+              <!-- 爱宠简报 -->
+              <div class="p-4 bg-gradient-to-r from-pink-50 to-primary-50 rounded-2xl border border-primary-100">
+                <p class="text-sm font-semibold text-warm-text mb-2">爱宠简报</p>
+                <p class="text-xs text-warm-muted leading-relaxed">今天天气不错，适合带布丁去公园草地散步 30 分钟，让它自由嗅闻探索。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">晚上可以陪它玩 15 分钟寻物游戏或嗅闻垫，既能消耗精力又能增进感情。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">记得观察布丁今天的便便状态和精神状态，有任何异常及时记录到日记里。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">今天零食控制在 20g 以内，避免影响正餐食欲，建议选择低脂鸡肉干。</p>
+                <p class="text-xs text-warm-muted mt-1 leading-relaxed">别忘了今晚 8 点喂驱虫药，喂完后可以奖励一小块南瓜泥。</p>
+              </div>
+
+              <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl">
+                <div class="w-10 h-10 bg-primary-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="utensils" class="w-5 h-5 text-primary-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-warm-text">今日饮食</p>
+                  <p class="text-xs text-warm-muted">早：三文鱼粮 200g · 午：鸡胸肉 80g · 晚：蔬菜粥 150g</p>
+                </div>
+                <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-lg font-bold">A</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                <div class="w-10 h-10 bg-orange-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="footprints" class="w-5 h-5 text-orange-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-warm-text">今日运动</p>
+                  <p class="text-xs text-warm-muted">散步 45分钟 · 玩耍 20分钟</p>
+                </div>
+                <span class="text-xs text-warm-muted">达成 85%</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-red-50 rounded-2xl">
+                <div class="w-10 h-10 bg-red-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="bell" class="w-5 h-5 text-red-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-warm-text">待办提醒</p>
+                  <p class="text-xs text-warm-muted">今晚 8:00 喂驱虫药 · 本周六更新体重</p>
+                </div>
+                <span class="w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 近期趋势 -->
+          <div class="section-card">
+            <h3 class="font-heading text-lg font-bold text-warm-text mb-4">近期趋势</h3>
+            <div class="mb-4">
+              <p class="text-sm font-semibold text-warm-text mb-2">体重变化（最近30天）</p>
+              <div class="chart-container">
+                <canvas id="weightChart"></canvas>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-sm font-semibold text-warm-text mb-2">饮食结构</p>
+                <div class="chart-container !h-[130px]">
+                  <canvas id="dietChart"></canvas>
+                </div>
+              </div>
+              <div class="flex flex-col justify-center">
+                <div class="p-3 bg-primary-50 rounded-2xl">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-primary-600 mb-1"></i>
+                  <p class="text-xs text-warm-text leading-relaxed">布丁近期体重稳定，蛋白质摄入充足，建议适当增加膳食纤维。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 快捷入口 -->
+          <div class="grid grid-cols-3 gap-3">
+            <button onclick="switchTab('diary')" class="quick-btn bg-white rounded-2xl p-4 shadow-card flex flex-col items-center gap-2">
+              <div class="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center">
+                <i data-lucide="notebook-pen" class="w-6 h-6 text-primary-700"></i>
+              </div>
+              <span class="text-xs font-semibold text-warm-text">记录吃饭</span>
+            </button>
+            <button onclick="switchTab('eat')" class="quick-btn bg-white rounded-2xl p-4 shadow-card flex flex-col items-center gap-2">
+              <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
+                <i data-lucide="message-circle" class="w-6 h-6 text-orange-700"></i>
+              </div>
+              <span class="text-xs font-semibold text-warm-text">问AI吃什么</span>
+            </button>
+            <button onclick="switchTab('discover')" class="quick-btn bg-white rounded-2xl p-4 shadow-card flex flex-col items-center gap-2">
+              <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                <i data-lucide="shopping-bag" class="w-6 h-6 text-green-700"></i>
+              </div>
+              <span class="text-xs font-semibold text-warm-text">买粮食</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 日记页 -->
+      <div id="page-diary" class="page">
+
+        <div class="mt-2">
+          <!-- 日期选择 -->
+          <div class="section-card !p-3 flex items-center justify-between relative">
+            <button class="p-2 hover:bg-primary-50 rounded-xl"><i data-lucide="chevron-left" class="w-5 h-5 text-warm-muted"></i></button>
+            <div class="text-center cursor-pointer" onclick="toggleCalendar()">
+              <p id="diary-date" class="font-heading font-bold text-warm-text">6月24日</p>
+              <p id="diary-weekday" class="text-xs text-warm-muted">今天</p>
+            </div>
+            <button class="p-2 hover:bg-primary-50 rounded-xl"><i data-lucide="chevron-right" class="w-5 h-5 text-warm-muted"></i></button>
+
+            <!-- 日历弹窗 -->
+            <div id="calendar-popup" class="calendar-popup">
+              <div class="flex items-center justify-between mb-3">
+                <button onclick="changeMonth(-1)" class="p-1.5 hover:bg-primary-50 rounded-lg"><i data-lucide="chevron-left" class="w-4 h-4 text-warm-muted"></i></button>
+                <span id="calendar-month-year" class="font-heading font-bold text-warm-text">2026年6月</span>
+                <button onclick="changeMonth(1)" class="p-1.5 hover:bg-primary-50 rounded-lg"><i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i></button>
+              </div>
+              <div class="grid grid-cols-7 gap-1 mb-2">
+                <span class="text-center text-xs text-warm-muted py-1">日</span>
+                <span class="text-center text-xs text-warm-muted py-1">一</span>
+                <span class="text-center text-xs text-warm-muted py-1">二</span>
+                <span class="text-center text-xs text-warm-muted py-1">三</span>
+                <span class="text-center text-xs text-warm-muted py-1">四</span>
+                <span class="text-center text-xs text-warm-muted py-1">五</span>
+                <span class="text-center text-xs text-warm-muted py-1">六</span>
+              </div>
+              <div id="calendar-days" class="grid grid-cols-7 gap-1"></div>
+            </div>
+          </div>
+
+          <!-- AI饮食计划 -->
+          <div class="section-card bg-gradient-to-br from-primary-100 to-primary-50 border border-primary-200">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 bg-primary-400 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+              </div>
+              <div>
+                <h3 class="font-heading font-bold text-warm-text">今日推荐食谱</h3>
+                <p class="text-sm text-warm-muted mt-1">基于布丁的过敏史和体重，推荐低脂高蛋白方案：</p>
+                <ul class="text-sm text-warm-text mt-2 space-y-1">
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>早餐：三文鱼粮 200g</li>
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>午餐：火鸡胸肉 80g + 胡萝卜</li>
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>晚餐：南瓜牛肉粥 150g</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 运动建议 -->
+          <div class="section-card">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                <i data-lucide="footprints" class="w-5 h-5 text-orange-700"></i>
+              </div>
+              <div>
+                <h3 class="font-heading font-bold text-warm-text">运动建议</h3>
+                <p class="text-sm text-warm-muted">今天热量略高，建议增加运动</p>
+              </div>
+            </div>
+            <p class="text-sm text-warm-text ml-13">建议傍晚散步 <span class="font-bold text-primary-700">40分钟</span>，避免剧烈运动后立即进食。</p>
+          </div>
+
+          <!-- 时间线 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-4">今日记录</h3>
+            <div class="relative pl-5 space-y-6">
+              <div class="absolute left-[9px] top-2 bottom-2 w-0.5 bg-primary-200"></div>
+
+              <div class="relative">
+                <div class="timeline-dot absolute -left-[13px] top-1.5"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-primary-700 bg-primary-100 px-2 py-0.5 rounded-full">饮食</span>
+                    <span class="text-xs text-warm-muted">08:30</span>
+                  </div>
+                  <div class="bg-primary-50 rounded-2xl p-3">
+                    <p class="text-sm font-semibold text-warm-text">早餐</p>
+                    <p class="text-xs text-warm-muted">三文鱼粮 200g · 完成度 100%</p>
+                    <div class="flex gap-2 mt-2">
+                      <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=100&h=100&fit=crop" class="w-12 h-12 rounded-lg object-cover">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <div class="timeline-dot absolute -left-[13px] top-1.5"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">运动</span>
+                    <span class="text-xs text-warm-muted">10:00</span>
+                  </div>
+                  <div class="bg-orange-50 rounded-2xl p-3">
+                    <p class="text-sm font-semibold text-warm-text">晨间散步</p>
+                    <p class="text-xs text-warm-muted">45分钟 · 中等强度</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <div class="timeline-dot absolute -left-[13px] top-1.5"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">健康</span>
+                    <span class="text-xs text-warm-muted">11:30</span>
+                  </div>
+                  <div class="bg-red-50 rounded-2xl p-3">
+                    <p class="text-sm font-semibold text-warm-text">便便记录</p>
+                    <p class="text-xs text-warm-muted">正常 · 棕色 · 成型</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 提醒设置 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">定时提醒</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 bg-primary-50 rounded-2xl">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="clock" class="w-5 h-5 text-primary-700"></i>
+                  <div>
+                    <p class="text-sm font-semibold text-warm-text">早餐喂食</p>
+                    <p class="text-xs text-warm-muted">每天 08:00</p>
+                  </div>
+                </div>
+                <div class="toggle-switch on"></div>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-blue-50 rounded-2xl">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="droplets" class="w-5 h-5 text-blue-700"></i>
+                  <div>
+                    <p class="text-sm font-semibold text-warm-text">饮水提醒</p>
+                    <p class="text-xs text-warm-muted">每天 12:00、18:00</p>
+                  </div>
+                </div>
+                <div class="toggle-switch on"></div>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-purple-50 rounded-2xl">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="pill" class="w-5 h-5 text-purple-700"></i>
+                  <div>
+                    <p class="text-sm font-semibold text-warm-text">驱虫药</p>
+                    <p class="text-xs text-warm-muted">每月24日 20:00</p>
+                  </div>
+                </div>
+                <div class="toggle-switch on"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 快捷记录按钮 -->
+          <div class="flex gap-3">
+            <button class="quick-btn flex-1 bg-primary-400 text-white rounded-2xl py-4 shadow-button flex items-center justify-center gap-2 font-semibold">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+              记录吃饭
+            </button>
+            <button class="quick-btn flex-1 bg-orange-400 text-white rounded-2xl py-4 shadow-button flex items-center justify-center gap-2 font-semibold">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+              记录运动
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 吃饭页 -->
+      <div id="page-eat" class="page">
+        <div class="nav-header">
+          <div class="relative flex items-center justify-center">
+            <div class="flex items-center justify-center gap-8">
+              <button class="sub-tab active" onclick="switchEatTab('chat')">AI讨论</button>
+              <button class="sub-tab" onclick="switchEatTab('notes')">食记</button>
+              <button class="sub-tab" onclick="switchEatTab('history')">历史</button>
+            </div>
+            <button class="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-primary-100 hover:bg-primary-200 rounded-full flex items-center justify-center transition-colors" title="新话题">
+              <i data-lucide="plus" class="w-5 h-5 text-primary-700"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <!-- AI讨论子页面 -->
+          <div id="eat-chat" class="eat-page active">
+            <div id="chat-messages" class="space-y-5 mb-44">
+              <!-- 用户消息1：柯基食谱（放在最上面） -->
+              <div class="flex justify-end">
+                <div class="message-bubble message-user">
+                  <p>我现在想要给一只成年的柯基（自己的爱宠）做一个有关于"南瓜鸡肉粥"的宠物食谱，你能告诉我买什么食材、以及怎么做呢？</p>
+                </div>
+              </div>
+
+              <!-- AI思考卡片1 -->
+              <div class="suggestion-card mb-3">
+                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="lightbulb" class="w-4 h-4 text-primary-600"></i>
+                </div>
+                <span class="text-sm text-warm-text flex-1">成年柯基专属南瓜鸡肉粥方案</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </div>
+
+              <!-- AI回复1：完整结构化食谱 -->
+              <div class="ai-response">
+                <p>好的，给你一份<strong>成年柯基专属的南瓜鸡肉粥</strong>食谱。以一只标准体重（约10–12kg）的成年柯基为例，这是一顿<strong>温和、低敏、护肠胃</strong>的自制主食。</p>
+
+                <hr class="divider">
+
+                <p class="section-title">🛒 食材清单（一顿量，约200g成品）</p>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th>食材</th>
+                      <th>分量</th>
+                      <th>作用</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>鸡胸肉</strong>（去皮去骨）</td>
+                      <td>80g</td>
+                      <td>优质蛋白，低脂肪</td>
+                    </tr>
+                    <tr>
+                      <td><strong>南瓜</strong>（去皮去籽）</td>
+                      <td>60g</td>
+                      <td>膳食纤维+β-胡萝卜素，护肠胃</td>
+                    </tr>
+                    <tr>
+                      <td><strong>大米或糙米</strong></td>
+                      <td>25g（生重）</td>
+                      <td>碳水供能，糙米纤维更高</td>
+                    </tr>
+                    <tr>
+                      <td><strong>胡萝卜</strong>（可选）</td>
+                      <td>20g</td>
+                      <td>维生素A，增加甜味</td>
+                    </tr>
+                    <tr>
+                      <td><strong>纯净水</strong></td>
+                      <td>约250ml</td>
+                      <td>煮粥用</td>
+                    </tr>
+                    <tr>
+                      <td><strong>蛋壳粉/碳酸钙粉</strong></td>
+                      <td>1g（约1/4茶匙）</td>
+                      <td>⚠️ 必须加，补充钙质</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="tip-box">
+                  <strong>💡 没有大米？</strong> 可以用剩米饭直接加水煮，更省事。
+                </div>
+
+                <hr class="divider">
+
+                <p class="section-title">👨‍🍳 制作步骤</p>
+
+                <ol>
+                  <li><strong>备料</strong>：鸡肉切小块（指甲盖大小），南瓜和胡萝卜去皮去籽切丁，大米洗净。</li>
+                  <li><strong>煮米</strong>：大米加水，大火煮开后转小火煮10分钟至半开花。</li>
+                  <li><strong>下南瓜</strong>：加入南瓜丁、胡萝卜丁，继续煮10分钟至软烂。</li>
+                  <li><strong>下鸡肉</strong>：加入鸡肉丁，搅拌开，煮5–8分钟至鸡肉完全变白熟透（<strong>不要带生</strong>）。</li>
+                  <li><strong>收汁</strong>：煮至粥状、汤汁浓稠即可。如果太稀就多煮一会儿，太稠就加点水。</li>
+                  <li><strong>冷却</strong>：关火后放凉至<strong>室温或微温</strong>（约35°C），撒入蛋壳粉拌匀。</li>
+                </ol>
+
+                <hr class="divider">
+
+                <p class="section-title">🐶 喂食建议</p>
+
+                <ul>
+                  <li><strong>一顿喂量</strong>：成年柯基一顿约 <strong>150–200g</strong> 湿粮（根据当天运动量调整）。</li>
+                  <li><strong>喂食频率</strong>：如果当作主食，建议 <strong>一天两顿</strong>（早晚各一份）。</li>
+                  <li><strong>保存</strong>：现做现吃最好。冷藏可存2天，吃前务必加热至温热。</li>
+                </ul>
+
+                <hr class="divider">
+
+                <p class="section-title">⚠️ 重要提醒</p>
+
+                <table class="warning-table">
+                  <thead>
+                    <tr>
+                      <th>❌ 不要加</th>
+                      <th>✅ 必须注意</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>盐、酱油、调味料</td>
+                      <td>任何调味料对狗肾脏都是负担</td>
+                    </tr>
+                    <tr>
+                      <td>洋葱、大蒜、葱</td>
+                      <td>对狗有毒，绝对禁止</td>
+                    </tr>
+                    <tr>
+                      <td>南瓜籽和皮</td>
+                      <td>皮难消化，籽可能卡喉咙</td>
+                    </tr>
+                    <tr>
+                      <td>鸡骨头</td>
+                      <td>熟鸡骨易碎裂划伤肠道</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="final-tip">
+                  <strong>长期吃自制粮的柯基</strong>：这碗粥营养不全面，<strong>每周至少3–4天要搭配商业狗粮或额外补充</strong>：钙粉、少量鱼油（Omega-3）、以及动物内脏（如鸡肝每周10g）。否则长期会缺微量元素。
+                </div>
+
+                <hr class="divider">
+
+                <p>如果你想让布丁长期吃自制，你需要生成更精确的每周食谱（包括钙粉、鱼油、内脏的配比）。需要我帮你算一下它现在的每日热量需求吗？</p>
+              </div>
+
+              <!-- 用户消息2 -->
+              <div class="flex justify-end">
+                <div class="message-bubble message-user">
+                  <p>布丁最近有点软便，该吃什么？</p>
+                </div>
+              </div>
+
+              <!-- AI回复2：深度思考卡片 -->
+              <div class="suggestion-card mb-3">
+                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="lightbulb" class="w-4 h-4 text-primary-600"></i>
+                </div>
+                <span class="text-sm text-warm-text flex-1">布丁软便期间饮食方案</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </div>
+
+              <!-- AI回复：文档流式样式 -->
+              <div class="ai-response">
+                <h3>软便期间饮食建议</h3>
+                <ol>
+                  <li><span class="highlight-num">1.</span> 暂停零食和新的食物</li>
+                  <li><span class="highlight-num">2.</span> 选择易消化的主食：白鸡肉+南瓜+白米饭</li>
+                  <li><span class="highlight-num">3.</span> 少量多餐，每餐减至平时的70%</li>
+                  <li><span class="highlight-num">4.</span> 保证充足饮水</li>
+                </ol>
+                <p class="warning-text">若持续超过24小时或伴有呕吐，请及时咨询兽医。</p>
+              </div>
+
+              <!-- 用户消息3 -->
+              <div class="flex justify-end">
+                <div class="message-bubble message-user">
+                  <p>南瓜鸡肉粥怎么做？</p>
+                </div>
+              </div>
+
+              <!-- AI思考卡片3 -->
+              <div class="suggestion-card mb-3">
+                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="lightbulb" class="w-4 h-4 text-primary-600"></i>
+                </div>
+                <span class="text-sm text-warm-text flex-1">南瓜鸡肉粥制作方案</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </div>
+
+              <!-- AI回复3：食谱卡片 -->
+              <div class="ai-response">
+                <h3>南瓜鸡肉粥食谱</h3>
+                <div class="recipe-card">
+                  <p class="recipe-section">食材：</p>
+                  <p>鸡胸肉150g、南瓜100g、糙米50g</p>
+                  <p class="recipe-section">步骤：</p>
+                  <ol>
+                    <li>鸡肉切丁焯水去沫</li>
+                    <li>南瓜去皮切块蒸软</li>
+                    <li>糙米煮成粥后加入食材</li>
+                    <li>小火煮15分钟至软烂</li>
+                  </ol>
+                  <p class="recipe-tip">适合软便恢复期，可保存到食记</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 滚动到底部按钮 -->
+            <button class="scroll-to-bottom">
+              <i data-lucide="arrow-down" class="w-5 h-5 text-gray-500"></i>
+            </button>
+
+            <!-- Skill 选择栏 + 输入栏 -->
+            <div class="chat-input-wrapper">
+              <!-- 快捷标签行 -->
+              <div class="skill-pills-row">
+                <button class="skill-pill">
+                  <i data-lucide="chef-hat" class="w-4 h-4 text-gray-500"></i>
+                  食谱规划
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="file-text" class="w-4 h-4 text-gray-500"></i>
+                  体检报告
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="footprints" class="w-4 h-4 text-gray-500"></i>
+                  运动规划
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="bell" class="w-4 h-4 text-gray-500"></i>
+                  饮食提醒
+                </button>
+                <button class="skill-pill">
+                  <i data-lucide="carrot" class="w-4 h-4 text-gray-500"></i>
+                  鲜粮做法
+                </button>
+              </div>
+
+              <!-- 输入框容器 -->
+              <div class="chat-input-container">
+                <button id="mic-btn" class="chat-mic-btn">
+                  <i data-lucide="mic" class="w-5 h-5 text-gray-600"></i>
+                </button>
+                <input id="chat-input" type="text" class="chat-text-input" placeholder="尽管问，带图也行">
+                <button id="send-btn" class="chat-plus-btn">
+                  <i data-lucide="plus" class="w-5 h-5 text-white"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 食记子页面 -->
+          <div id="eat-notes" class="eat-page">
+            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+              <button class="category-pill active bg-primary-100 text-warm-text whitespace-nowrap">全部</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">饮食方案</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">食物安全</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">鲜粮食谱</button>
+            </div>
+
+            <div class="space-y-4">
+              <div class="section-card note-card" onclick="toggleNoteCard(this)">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="soup" class="w-5 h-5 text-primary-700"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-heading font-bold text-warm-text">南瓜鸡肉粥</h4>
+                      <button class="text-xs text-primary-600 font-semibold">编辑</button>
+                    </div>
+                    <p class="text-xs text-warm-muted mt-1">来自 AI讨论 · 2026.06.24</p>
+                    <p class="text-sm text-warm-text mt-2">软便恢复期食谱，易消化、低刺激</p>
+                    <div class="flex items-center justify-between mt-3">
+                      <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 bg-primary-50 text-primary-800 text-xs rounded-lg">鲜粮食谱</span>
+                        <span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-lg">肠胃调理</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="expand-icon w-4 h-4 text-warm-muted"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="note-detail">
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-1.5">所需食材</p>
+                      <ul class="text-sm text-warm-text space-y-1">
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>鸡胸肉 150g（去皮去脂）</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>南瓜 100g（去皮去籽）</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>糙米 50g（或白米）</li>
+                        <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>清水 400ml</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-1.5">制作步骤</p>
+                      <ol class="text-sm text-warm-text space-y-1.5 ml-4 list-decimal">
+                        <li>鸡胸肉切丁，冷水下锅焯水去沫，捞出沥干</li>
+                        <li>南瓜去皮切块，蒸 10 分钟至软烂</li>
+                        <li>糙米洗净后加水煮成粥</li>
+                        <li>粥熟后加入鸡肉丁和南瓜，小火煮 15 分钟</li>
+                        <li>放凉至室温后即可喂食</li>
+                      </ol>
+                    </div>
+                    <div class="p-2.5 bg-primary-50 rounded-xl">
+                      <p class="text-xs font-semibold text-warm-text mb-1">适用场景</p>
+                      <p class="text-xs text-warm-text">软便恢复期、肠胃敏感、术后调理。建议连续喂食 2-3 天观察便便状态。</p>
+                    </div>
+
+                    <button class="ai-cart-btn" onclick="event.stopPropagation(); aiAddToCart(this)">
+                      <i data-lucide="sparkles" class="w-4 h-4"></i>
+                      AI一键加入购物车
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card note-card" onclick="toggleNoteCard(this)">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-green-700"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-heading font-bold text-warm-text">食物安全：蓝莓</h4>
+                      <button class="text-xs text-primary-600 font-semibold">编辑</button>
+                    </div>
+                    <p class="text-xs text-warm-muted mt-1">来自 AI讨论 · 2026.06.23</p>
+                    <p class="text-sm text-warm-text mt-2">✅ 可以少量食用，富含抗氧化剂，每次不超过5颗</p>
+                    <div class="flex items-center justify-between mt-3">
+                      <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 bg-green-50 text-green-700 text-xs rounded-lg">食物安全</span>
+                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg">水果</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="expand-icon w-4 h-4 text-warm-muted"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="note-detail">
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-1.5">食物介绍</p>
+                      <p class="text-sm text-warm-text leading-relaxed">蓝莓是低糖水果，富含花青素、维生素 C 和膳食纤维，对狗狗的视力和免疫力有一定帮助。果肉软糯，大多数狗狗容易接受。</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="p-2.5 bg-green-50 rounded-xl">
+                        <p class="text-xs font-semibold text-green-800 mb-1">✅ 好处</p>
+                        <ul class="text-xs text-green-700 space-y-1">
+                          <li>抗氧化、抗炎</li>
+                          <li>补充维生素 C</li>
+                          <li>促进肠道蠕动</li>
+                          <li>低热量适合减脂期</li>
+                        </ul>
+                      </div>
+                      <div class="p-2.5 bg-red-50 rounded-xl">
+                        <p class="text-xs font-semibold text-red-800 mb-1">⚠️ 禁忌/注意</p>
+                        <ul class="text-xs text-red-700 space-y-1">
+                          <li>必须去核、去蒂</li>
+                          <li>每次不超过 5 颗</li>
+                          <li>肠胃敏感狗狗慎喂</li>
+                          <li>第一次喂食需观察过敏反应</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="p-2.5 bg-blue-50 rounded-xl">
+                      <p class="text-xs text-blue-800"><span class="font-semibold">喂食建议：</span>选择新鲜蓝莓，洗净后可整颗或切半喂食；不建议喂蓝莓干或含糖蓝莓制品。</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card note-card" onclick="toggleNoteCard(this)">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-700"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h4 class="font-heading font-bold text-warm-text">布丁减脂期饮食方案</h4>
+                      <button class="text-xs text-primary-600 font-semibold">编辑</button>
+                    </div>
+                    <p class="text-xs text-warm-muted mt-1">来自 AI讨论 · 2026.06.20</p>
+                    <p class="text-sm text-warm-text mt-2">控制热量摄入，增加纤维，每日主食减少15%</p>
+                    <div class="flex items-center justify-between mt-3">
+                      <div class="flex gap-2 flex-wrap">
+                        <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg">饮食方案</span>
+                        <span class="px-2 py-1 bg-purple-50 text-purple-700 text-xs rounded-lg">体重管理</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="expand-icon w-4 h-4 text-warm-muted"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="note-detail">
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-primary-50 rounded-xl">
+                      <div>
+                        <p class="text-xs text-warm-muted">目标体重</p>
+                        <p class="text-lg font-bold text-warm-text">27.0 kg</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-warm-muted">当前体重</p>
+                        <p class="text-lg font-bold text-warm-text">28.5 kg</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-warm-muted">周期</p>
+                        <p class="text-lg font-bold text-warm-text">4 周</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p class="text-sm font-semibold text-warm-text mb-2">每日执行计划</p>
+                      <div class="space-y-2">
+                        <div class="flex items-start gap-2 p-2.5 bg-white border border-primary-100 rounded-xl">
+                          <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">早餐</span>
+                          <p class="text-sm text-warm-text">低脂粮 180g + 水煮西兰花 30g</p>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 bg-white border border-primary-100 rounded-xl">
+                          <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">午餐</span>
+                          <p class="text-sm text-warm-text">鸡胸肉 80g + 胡萝卜 50g</p>
+                        </div>
+                        <div class="flex items-start gap-2 p-2.5 bg-white border border-primary-100 rounded-xl">
+                          <span class="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-semibold">晚餐</span>
+                          <p class="text-sm text-warm-text">低脂粮 150g + 南瓜 40g</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="p-2.5 bg-orange-50 rounded-xl">
+                        <p class="text-xs font-semibold text-orange-800 mb-1">运动配合</p>
+                        <p class="text-xs text-orange-700">每日散步 45-60 分钟，周末可增加一次游泳或追球游戏</p>
+                      </div>
+                      <div class="p-2.5 bg-purple-50 rounded-xl">
+                        <p class="text-xs font-semibold text-purple-800 mb-1">监测指标</p>
+                        <p class="text-xs text-purple-700">每周称重 1 次，目标每周减重 0.3-0.5kg</p>
+                      </div>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 rounded-xl">
+                      <p class="text-xs font-semibold text-blue-800 mb-1">适用场景</p>
+                      <p class="text-xs text-blue-700">体重超标、活动量减少、兽医建议控制体重的成年犬；不适用于幼犬、孕犬及患病期间。</p>
+                    </div>
+
+                    <button class="ai-cart-btn" onclick="event.stopPropagation(); aiAddToCart(this)">
+                      <i data-lucide="sparkles" class="w-4 h-4"></i>
+                      AI一键加入购物车
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 历史子页面 -->
+          <div id="eat-history" class="eat-page">
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">历史对话</h3>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <i data-lucide="message-square" class="w-5 h-5 text-primary-700"></i>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-warm-text">软便期间饮食</p>
+                    <p class="text-xs text-warm-muted">2026.06.24 · 5条消息</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <i data-lucide="message-square" class="w-5 h-5 text-primary-700"></i>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-warm-text">金毛幼犬吃什么</p>
+                    <p class="text-xs text-warm-muted">2026.06.22 · 8条消息</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <i data-lucide="message-square" class="w-5 h-5 text-primary-700"></i>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-warm-text">自制鲜粮配方</p>
+                    <p class="text-xs text-warm-muted">2026.06.18 · 12条消息</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">常见问题收藏</h3>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                  <i data-lucide="star" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
+                  <p class="text-sm text-warm-text">狗狗能吃巧克力吗？</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                  <i data-lucide="star" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
+                  <p class="text-sm text-warm-text">如何判断狗粮好坏？</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-2xl">
+                  <i data-lucide="star" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
+                  <p class="text-sm text-warm-text">生骨肉入门指南</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 发现页 -->
+      <div id="page-discover" class="page">
+        <div class="nav-header">
+          <div class="flex items-center justify-center gap-8">
+            <button class="sub-tab active" onclick="switchDiscoverTab('recommend')">推荐</button>
+            <button class="sub-tab" onclick="switchDiscoverTab('mall')">商城</button>
+            <button class="sub-tab" onclick="switchDiscoverTab('knowledge')">知识库</button>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <!-- 推荐 -->
+          <div id="discover-recommend" class="discover-page active">
+            <!-- 搜索 -->
+            <div class="mall-search-bar mb-4">
+              <input type="text" placeholder="搜索好物、食谱、养宠经验...">
+              <button class="p-1.5 hover:bg-primary-50 rounded-full transition-colors">
+                <i data-lucide="camera" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+              <button class="px-4 py-1.5 bg-primary-400 text-white text-sm font-semibold rounded-full shadow-button">搜索</button>
+            </div>
+
+            <!-- 双列瀑布流推荐 -->
+            <div class="waterfall">
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&h=400&fit=crop" style="aspect-ratio: 3/4;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">鸡胸肉冻干 500g，低脂高蛋白训练奖励</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">零食</span>
+                    <span class="waterfall-tag">高蛋白</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300&h=360&fit=crop" style="aspect-ratio: 5/6;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">低敏三文鱼全价犬粮 2kg，无谷物配方</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">干粮</span>
+                    <span class="waterfall-tag">低敏</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=300&h=420&fit=crop" style="aspect-ratio: 5/7;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">新鲜胡萝卜 1kg，狗狗肠胃调理蔬菜</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">鲜粮食材</span>
+                    <span class="waterfall-tag">纤维</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1623366302587-b38b1ddaefd9?w=300&h=380&fit=crop" style="aspect-ratio: 15/19;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">火鸡蔬菜罐头 85g×6，补水挑食专用</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">湿粮</span>
+                    <span class="waterfall-tag">无添加</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=300&h=340&fit=crop" style="aspect-ratio: 15/17;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">自制南瓜鸡肉粥食谱，软便恢复期推荐</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">食谱</span>
+                    <span class="waterfall-tag">肠胃调理</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=300&h=400&fit=crop" style="aspect-ratio: 3/4;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">狗狗水果喂食指南：蓝莓、苹果、香蕉</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">知识</span>
+                    <span class="waterfall-tag">安全速查</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&h=360&fit=crop" style="aspect-ratio: 5/6;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">金毛减脂期饮食方案，3个月健康减重</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">饮食方案</span>
+                    <span class="waterfall-tag">体重管理</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waterfall-item">
+                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=440&fit=crop" style="aspect-ratio: 15/22;">
+                <div class="waterfall-content">
+                  <p class="waterfall-title">幼猫到家第一周饮食安排，新手养猫必看</p>
+                  <div class="waterfall-tags">
+                    <span class="waterfall-tag">新手</span>
+                    <span class="waterfall-tag">猫咪</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 商城 -->
+          <div id="discover-mall" class="discover-page">
+            <!-- 搜索栏 -->
+            <div class="mall-search-bar mb-4">
+              <input type="text" placeholder="搜索宠物用品、粮食、零食...">
+              <button class="p-1.5 hover:bg-primary-50 rounded-full transition-colors">
+                <i data-lucide="camera" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+              <button class="px-4 py-1.5 bg-primary-400 text-white text-sm font-semibold rounded-full shadow-button">搜索</button>
+            </div>
+
+            <!-- 分类标签 -->
+            <div class="flex gap-3 mb-5 overflow-x-auto pb-2 scrollbar-hide">
+              <button class="category-pill active bg-primary-100 text-warm-text whitespace-nowrap">全部</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">鲜粮食材</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">干粮</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">湿粮</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">零食</button>
+              <button class="category-pill bg-white text-warm-text shadow-card whitespace-nowrap">用品</button>
+            </div>
+
+            <!-- 功能入口网格 -->
+            <div class="grid grid-cols-5 gap-y-4 mb-5">
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-red-100"><i data-lucide="sparkles" class="w-6 h-6 text-red-600"></i></div>
+                <span class="icon-label">AI购买</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-blue-100"><i data-lucide="cookie" class="w-6 h-6 text-blue-600"></i></div>
+                <span class="icon-label">成品粮食</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-orange-100"><i data-lucide="bone" class="w-6 h-6 text-orange-600"></i></div>
+                <span class="icon-label">零食专区</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-green-100"><i data-lucide="pill" class="w-6 h-6 text-green-600"></i></div>
+                <span class="icon-label">营养补剂</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-purple-100"><i data-lucide="beef" class="w-6 h-6 text-purple-600"></i></div>
+                <span class="icon-label">鲜粮食材</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-pink-100"><i data-lucide="clipboard-list" class="w-6 h-6 text-pink-600"></i></div>
+                <span class="icon-label">我的订单</span>
+              </div>
+              <div class="mall-grid-icon" onclick="openCart()">
+                <div class="icon-box bg-yellow-100"><i data-lucide="shopping-cart" class="w-6 h-6 text-yellow-600"></i></div>
+                <span class="icon-label">购物车</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-teal-100"><i data-lucide="ticket" class="w-6 h-6 text-teal-600"></i></div>
+                <span class="icon-label">优惠券</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-indigo-100"><i data-lucide="message-circle" class="w-6 h-6 text-indigo-600"></i></div>
+                <span class="icon-label">客服消息</span>
+              </div>
+              <div class="mall-grid-icon">
+                <div class="icon-box bg-rose-100"><i data-lucide="footprints" class="w-6 h-6 text-rose-600"></i></div>
+                <span class="icon-label">商品足迹</span>
+              </div>
+            </div>
+
+            <!-- 推荐商品 -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">某品牌官方店</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">鸡胸肉冻干 500g 宠物零食</h4>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-base font-bold text-primary-700">¥59.9</span>
+                    <span class="text-xs text-warm-muted">已售 2300+</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">某品牌官方店</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">低敏三文鱼全价犬粮 2kg</h4>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-base font-bold text-primary-700">¥268</span>
+                    <span class="text-xs text-warm-muted">已售 880+</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">有机农场直供</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">新鲜胡萝卜 1kg 狗狗蔬菜</h4>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-base font-bold text-primary-700">¥12.8</span>
+                    <span class="text-xs text-warm-muted">已售 5600+</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mall-product-card">
+                <img src="https://images.unsplash.com/photo-1623366302587-b38b1ddaefd9?w=300&h=300&fit=crop" class="w-full aspect-square object-cover">
+                <div class="p-3">
+                  <p class="text-xs text-warm-muted">某品牌官方店</p>
+                  <h4 class="text-sm font-semibold text-warm-text mt-0.5 line-clamp-2">火鸡蔬菜罐头 85g×6</h4>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-base font-bold text-primary-700">¥98</span>
+                    <span class="text-xs text-warm-muted">已售 1200+</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 知识库 -->
+          <div id="discover-knowledge" class="discover-page">
+            <!-- 搜索 -->
+            <div class="relative mb-4">
+              <input type="text" placeholder="搜索知识、科普、鉴别方法..." class="w-full bg-white rounded-2xl pl-11 pr-4 py-3 shadow-card text-sm text-warm-text placeholder-warm-muted outline-none border border-primary-100">
+              <i data-lucide="search" class="w-5 h-5 text-warm-muted absolute left-4 top-1/2 -translate-y-1/2"></i>
+            </div>
+
+            <!-- 鉴别指南 -->
+            <div class="section-card bg-gradient-to-br from-orange-50 to-primary-50">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-orange-200 rounded-xl flex items-center justify-center">
+                  <i data-lucide="book-open" class="w-5 h-5 text-orange-800"></i>
+                </div>
+                <h3 class="font-heading font-bold text-warm-text">轻量鉴别指南</h3>
+              </div>
+              <div class="space-y-2 text-sm text-warm-text">
+                <p class="flex items-start gap-2"><span class="text-green-600 font-bold">✓</span> 配料表前3位最好是明确肉类</p>
+                <p class="flex items-start gap-2"><span class="text-green-600 font-bold">✓</span> 避免过量谷物和诱食剂</p>
+                <p class="flex items-start gap-2"><span class="text-red-600 font-bold">✗</span> 警惕只写"肉类及其制品"</p>
+                <p class="flex items-start gap-2"><span class="text-red-600 font-bold">✗</span> 香精、BHA/BHT防腐剂尽量避开</p>
+              </div>
+            </div>
+
+            <!-- 知识库文章 -->
+            <div class="section-card">
+              <h3 class="font-heading font-bold text-warm-text mb-3">知识库</h3>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <div class="w-12 h-12 bg-primary-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="bone" class="w-6 h-6 text-primary-800"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">生骨肉入门指南</h4>
+                    <p class="text-xs text-warm-muted">5分钟读完 · 适合新手</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <div class="w-12 h-12 bg-green-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="search" class="w-6 h-6 text-green-800"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">过敏原识别手册</h4>
+                    <p class="text-xs text-warm-muted">10分钟读完 · 布丁已收藏</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-2xl cursor-pointer hover:bg-primary-100 transition-colors">
+                  <div class="w-12 h-12 bg-red-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="ban" class="w-6 h-6 text-red-800"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-warm-text">食材安全速查表</h4>
+                    <p class="text-xs text-warm-muted">常见食物能不能吃</p>
+                  </div>
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 我的页 -->
+      <div id="page-profile" class="page">
+        <div class="nav-header">
+          <h1 class="font-heading text-2xl font-bold text-warm-text">我的</h1>
+        </div>
+
+        <div class="mt-2">
+          <!-- 用户信息 -->
+          <div class="section-card">
+            <div class="flex items-center gap-4">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop" alt="用户头像" class="w-16 h-16 rounded-full object-cover border-3 border-primary-200">
+              <div class="flex-1">
+                <h2 class="font-heading text-xl font-bold text-warm-text">布丁麻麻</h2>
+                <p class="text-sm text-warm-muted">ID: petlover_2026</p>
+              </div>
+              <button class="p-2 hover:bg-primary-50 rounded-xl transition-colors">
+                <i data-lucide="settings" class="w-5 h-5 text-warm-muted"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 宠物管理 -->
+          <div class="section-card">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-heading font-bold text-warm-text">宠物管理</h3>
+              <button class="text-sm text-primary-700 font-semibold flex items-center gap-1">
+                <i data-lucide="plus" class="w-4 h-4"></i> 添加宠物
+              </button>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 p-3 bg-primary-100 border-2 border-primary-400 rounded-2xl">
+                <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=100&h=100&fit=crop" class="w-12 h-12 rounded-full object-cover">
+                <div class="flex-1">
+                  <p class="font-semibold text-warm-text">布丁 <span class="text-xs font-normal text-warm-muted">金毛 · 3岁</span></p>
+                  <p class="text-xs text-warm-muted">28.5kg · 当前选中</p>
+                </div>
+                <i data-lucide="check-circle" class="w-5 h-5 text-primary-600 fill-primary-100"></i>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-white border border-primary-100 rounded-2xl">
+                <div class="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center">
+                  <i data-lucide="cat" class="w-6 h-6 text-primary-800"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-warm-text">汤圆 <span class="text-xs font-normal text-warm-muted">英短 · 2岁</span></p>
+                  <p class="text-xs text-warm-muted">4.2kg</p>
+                </div>
+                <button class="text-xs text-primary-700 font-semibold">切换</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 食物准备 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">🍽️ 食物准备</h3>
+            <div class="food-prep-grid">
+              <div class="food-prep-card" onclick="switchTab('eat'); setTimeout(()=>switchEatTab('notes'),300)">
+                <div class="fp-icon bg-primary-100"><i data-lucide="book-open" class="w-5 h-5 text-primary-700"></i></div>
+                <div class="fp-title">宠物食谱</div>
+                <div class="fp-sub">查看食记</div>
+              </div>
+              <div class="food-prep-card" onclick="showToast('美食记忆功能开发中')">
+                <div class="fp-icon bg-orange-100"><i data-lucide="heart" class="w-5 h-5 text-orange-700"></i></div>
+                <div class="fp-title">宠物美食记忆</div>
+                <div class="fp-sub">收藏与回顾</div>
+              </div>
+              <div class="food-prep-card" onclick="openCart()">
+                <div class="fp-icon bg-green-100"><i data-lucide="shopping-cart" class="w-5 h-5 text-green-700"></i></div>
+                <div class="fp-title">粮食购物车</div>
+                <div class="fp-sub" id="fp-cart-count">0件食材</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 扩展功能 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">扩展功能</h3>
+            <div class="space-y-1">
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="bell" class="w-4.5 h-4.5 text-primary-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">提醒设置</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="file-text" class="w-4.5 h-4.5 text-blue-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">体检报告导入</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="download" class="w-4.5 h-4.5 text-green-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">数据导出</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="watch" class="w-4.5 h-4.5 text-purple-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">设备管理</span>
+                </div>
+                <span class="text-xs text-warm-muted">预留</span>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="message-circle" class="w-4.5 h-4.5 text-orange-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">意见反馈</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+              <button class="w-full flex items-center justify-between p-3 hover:bg-primary-50 rounded-2xl transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="info" class="w-4.5 h-4.5 text-gray-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">关于我们</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-warm-muted"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 预留入口 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">后续版本</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl opacity-70">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-yellow-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="crown" class="w-4.5 h-4.5 text-yellow-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">会员/订阅</span>
+                </div>
+                <span class="text-xs text-warm-muted">即将上线</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl opacity-70">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-pink-100 rounded-xl flex items-center justify-center">
+                    <i data-lucide="users" class="w-4.5 h-4.5 text-pink-700"></i>
+                  </div>
+                  <span class="text-sm font-semibold text-warm-text">社区/分享</span>
+                </div>
+                <span class="text-xs text-warm-muted">即将上线</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 退出登录 -->
+          <button class="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-semibold hover:bg-red-100 transition-colors mb-4">
+            退出登录
+          </button>
+
+          <p class="text-center text-xs text-warm-muted mb-4">版本 1.0.0 · PetDiet AI</p>
+        </div>
+      </div>
+
+      <!-- 底部 Tab Bar -->
+      <div class="absolute bottom-0 left-0 right-0 h-[70px] bg-white rounded-b-[45px] bottom-tab flex items-start justify-around pt-1 pb-2 px-2 z-50">
+        <button onclick="switchTab('home')" class="tab-item active flex flex-col items-center gap-0" data-tab="home">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="home" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">首页</span>
+        </button>
+        <button onclick="switchTab('diary')" class="tab-item flex flex-col items-center gap-0" data-tab="diary">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="notebook-pen" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">日记</span>
+        </button>
+        <button onclick="switchTab('eat')" class="tab-item flex flex-col items-center gap-0" data-tab="eat">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">吃饭</span>
+        </button>
+        <button onclick="switchTab('discover')" class="tab-item flex flex-col items-center gap-0" data-tab="discover">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">发现</span>
+        </button>
+        <button onclick="switchTab('profile')" class="tab-item flex flex-col items-center gap-0" data-tab="profile">
+          <div class="tab-icon w-11 h-11 rounded-2xl flex items-center justify-center transition-colors">
+            <i data-lucide="user" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold leading-none -mt-0.5">我的</span>
+        </button>
+      </div>
+
+      <!-- 购物车面板 -->
+      <div id="cart-overlay" class="cart-overlay">
+        <div class="cart-panel" id="cart-panel">
+          <div class="cart-header">
+            <div class="flex items-center gap-2">
+              <h2>🛒 粮食购物车</h2>
+              <span class="cart-badge" id="cart-count">0件</span>
+            </div>
+            <button onclick="closeCart()" class="w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center">
+              <i data-lucide="x" class="w-5 h-5 text-warm-muted"></i>
+            </button>
+          </div>
+          <div class="cart-body" id="cart-body">
+            <div class="cart-empty" id="cart-empty">
+              <i data-lucide="shopping-cart" class="w-12 h-12 mx-auto mb-3" style="color:#FDE68A"></i>
+              <p class="font-semibold text-sm">购物车是空的</p>
+              <p class="text-xs mt-1">去"吃饭"页让AI帮你推荐食材吧</p>
+            </div>
+            <div id="cart-items"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // 时钟
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('clock').textContent = `${hours}:${minutes}`;
+    }
+    updateClock();
+    setInterval(updateClock, 60000);
+
+    // 购物车遮罩点击关闭
+    document.getElementById('cart-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeCart();
+    });
+
+    // 初始化购物车
+    setTimeout(() => renderCart(), 500);
+
+    // Tab 切换
+    function switchTab(tabName) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + tabName).classList.add('active');
+
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tab-item[data-tab="' + tabName + '"]').classList.add('active');
+      lucide.createIcons();
+    }
+
+    // 吃饭页子tab切换
+    function switchEatTab(tabName) {
+      document.querySelectorAll('.eat-page').forEach(p => p.classList.remove('active'));
+      document.getElementById('eat-' + tabName).classList.add('active');
+
+      const header = event.target.closest('.nav-header');
+      header.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // 发现页子tab切换
+    function switchDiscoverTab(tabName) {
+      document.querySelectorAll('.discover-page').forEach(p => p.classList.remove('active'));
+      document.getElementById('discover-' + tabName).classList.add('active');
+
+      const header = event.target.closest('.nav-header');
+      header.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // ========== 购物车系统 ==========
+    let cartItems = [];
+
+    // 初始演示数据
+    const demoSampleItems = [
+      {
+        id: 1, name: '去皮鸡胸肉', qty: '500g', img: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=120&h=120&fit=crop',
+        category: '鲜粮食材', note: '高蛋白低脂肪，适合大部分犬猫。布丁鸡肉过敏请勿购买。',
+        warning: '⚠️ 布丁对鸡肉过敏，建议替换为火鸡胸肉或鸭胸肉。AI已自动标注过敏风险，请确认后再购买。',
+        platforms: [
+          { name: '盒马', icon: '盒', color: '#1677FF', price: '¥12.8', tag: '30分钟达', tagColor: '#E8F4FD' },
+          { name: '永辉生活', icon: '永', color: '#E55C1F', price: '¥11.5', tag: '今日达', tagColor: '#FFF3E8' },
+          { name: '美团闪购', icon: '美', color: '#FFD100', price: '¥13.2', tag: '30分钟', tagColor: '#FFFDE8' },
+          { name: '京东到家', icon: '京', color: '#C91623', price: '¥14.0', tag: '1小时达', tagColor: '#FEF0F0' }
+        ]
+      },
+      {
+        id: 2, name: '贝贝南瓜', qty: '300g', img: 'https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=120&h=120&fit=crop',
+        category: '鲜粮食材', note: '富含膳食纤维和β-胡萝卜素，护肠胃、助消化。去籽去皮后喂食。',
+        warning: '✅ 安全食材，适合所有犬猫。南瓜籽和皮需去除后再喂。',
+        platforms: [
+          { name: '盒马', icon: '盒', color: '#1677FF', price: '¥4.5', tag: '30分钟达', tagColor: '#E8F4FD' },
+          { name: '永辉生活', icon: '永', color: '#E55C1F', price: '¥5.2', tag: '今日达', tagColor: '#FFF3E8' },
+          { name: '叮咚买菜', icon: '叮', color: '#00C9A7', price: '¥4.8', tag: '29分钟', tagColor: '#E8FAF4' }
+        ]
+      },
+      {
+        id: 3, name: '有机糙米', qty: '200g', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=120&h=120&fit=crop',
+        category: '主食谷物', note: '碳水供能，糙米比白米纤维更高，适合需要控制体重的宠物。',
+        warning: '✅ 安全食材。米粒煮至软烂后喂食，生米不可直接喂。',
+        platforms: [
+          { name: '淘宝', icon: '淘', color: '#FF5000', price: '¥15/2.5kg', tag: '2-3天', tagColor: '#FFF0E8' },
+          { name: '京东', icon: '京', color: '#C91623', price: '¥18/2.5kg', tag: '次日达', tagColor: '#FEF0F0' },
+          { name: '永辉生活', icon: '永', color: '#E55C1F', price: '¥2.8/200g', tag: '今日达', tagColor: '#FFF3E8' }
+        ]
+      },
+      {
+        id: 4, name: '宠物专用蛋壳粉', qty: '10g', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b4f1?w=120&h=120&fit=crop',
+        category: '营养补剂', note: '天然钙来源，自制鲜粮必须添加。每100g肉需配约1g蛋壳粉以平衡钙磷比。',
+        warning: '⚠️ 自制鲜粮长期食用必须补钙，否则会导致钙磷比失衡。不可用人类钙片替代。',
+        platforms: [
+          { name: '淘宝', icon: '淘', color: '#FF5000', price: '¥22/100g', tag: '2-3天', tagColor: '#FFF0E8' },
+          { name: '京东宠物', icon: '京', color: '#C91623', price: '¥26/100g', tag: '次日达', tagColor: '#FEF0F0' }
+        ]
+      }
+    ];
+
+    function renderCart() {
+      const container = document.getElementById('cart-items');
+      const empty = document.getElementById('cart-empty');
+      const count = document.getElementById('cart-count');
+      const fpCount = document.getElementById('fp-cart-count');
+
+      const total = cartItems.length;
+      count.textContent = total + '件';
+      if (fpCount) fpCount.textContent = total + '件食材';
+
+      if (total === 0) {
+        empty.style.display = 'block';
+        container.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      container.innerHTML = cartItems.map((item, idx) => `
+        <div class="cart-item-card" id="cart-item-${item.id}" onclick="toggleCartItem(this)">
+          <div class="cart-item-row">
+            <img src="${item.img}" class="cart-item-img" onerror="this.style.display='none'">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-meta">${item.qty} · ${item.category}</div>
+            </div>
+            <div class="cart-item-price">
+              <div class="price-main">${item.platforms[0].price}</div>
+              <div class="price-sub">${item.platforms[0].name}最优</div>
+            </div>
+            <i data-lucide="chevron-down" class="cart-expand-icon w-4 h-4 text-warm-muted"></i>
+          </div>
+          <div class="cart-compare">
+            <h4>📊 多平台比价</h4>
+            <div class="platform-list">
+              ${item.platforms.map(p => `
+                <div class="platform-row" onclick="event.stopPropagation();goToPlatform('${p.name}','${item.name}')">
+                  <div class="platform-icon" style="background:${p.color}20;color:${p.color}">${p.icon}</div>
+                  <div class="platform-name">${p.name}</div>
+                  <div class="platform-price">${p.price}</div>
+                  <span class="platform-tag" style="background:${p.tagColor}">${p.tag}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div class="cart-ai-note">
+              <div class="note-title">🤖 AI购买建议</div>
+              <div class="note-text">${item.note}</div>
+            </div>
+            <div class="cart-warning">
+              <div class="warn-text">${item.warning}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function openCart() {
+      renderCart();
+      document.getElementById('cart-overlay').classList.add('show');
+    }
+    function closeCart() {
+      document.getElementById('cart-overlay').classList.remove('show');
+    }
+    function toggleCartItem(card) {
+      card.classList.toggle('expanded');
+      lucide.createIcons();
+    }
+    function goToPlatform(platform, itemName) {
+      const maps = {
+        '盒马': 'https://m.hemashop.cn/search?q=',
+        '永辉生活': 'https://weixin.yonghui.cn/search?keyword=',
+        '美团闪购': 'https://i.meituan.com/awp/h5/shopping/search?keyword=',
+        '叮咚买菜': 'https://m.ddxq.mobi/search?keyword=',
+        '淘宝': 'https://s.taobao.com/search?q=',
+        '京东': 'https://search.jd.com/Search?keyword=',
+        '京东宠物': 'https://search.jd.com/Search?keyword='
+      };
+      const url = maps[platform] || 'https://s.taobao.com/search?q=';
+      showToast('正在跳转到' + platform + '搜索：' + itemName);
+      window.open(url + encodeURIComponent('宠物 ' + itemName), '_blank');
+    }
+
+    // AI一键加入购物车 → 加载商品的演示数据，然后打开购物车
+    function aiAddToCart(btn) {
+      btn.classList.add('added');
+      btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> 已加入购物车';
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.classList.remove('added');
+        btn.innerHTML = '<i data-lucide="sparkles" class="w-4 h-4"></i> AI一键加入购物车';
+        lucide.createIcons();
+      }, 2000);
+
+      // Add sample items to cart if empty
+      if (cartItems.length === 0) {
+        cartItems = JSON.parse(JSON.stringify(demoSampleItems));
+      }
+      setTimeout(() => openCart(), 600);
+    };
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // 食记卡片展开/收起
+    function toggleNoteCard(card) {
+      card.classList.toggle('expanded');
+      lucide.createIcons();
+    }
+
+    // 日历相关
+    let calendarCurrentDate = new Date(2026, 5, 24);
+    let calendarSelectedDate = new Date(2026, 5, 24);
+
+    function toggleCalendar() {
+      const popup = document.getElementById('calendar-popup');
+      popup.classList.toggle('show');
+      if (popup.classList.contains('show')) {
+        renderCalendar();
+      }
+    }
+
+    function changeMonth(delta) {
+      calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function selectDate(year, month, day) {
+      calendarSelectedDate = new Date(year, month, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selected = new Date(year, month, day);
+      selected.setHours(0, 0, 0, 0);
+
+      const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+      document.getElementById('diary-date').textContent = `${month + 1}月${day}日`;
+      document.getElementById('diary-weekday').textContent = selected.getTime() === today.getTime() ? '今天' : `${year}年`;
+
+      document.getElementById('calendar-popup').classList.remove('show');
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = calendarCurrentDate.getFullYear();
+      const month = calendarCurrentDate.getMonth();
+      document.getElementById('calendar-month-year').textContent = `${year}年${month + 1}月`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+      const container = document.getElementById('calendar-days');
+      container.innerHTML = '';
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // 上月日期
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const day = daysInPrevMonth - i;
+        const el = document.createElement('div');
+        el.className = 'calendar-day other-month';
+        el.textContent = day;
+        el.onclick = () => selectDate(year, month - 1, day);
+        container.appendChild(el);
+      }
+
+      // 当月日期
+      for (let day = 1; day <= daysInMonth; day++) {
+        const el = document.createElement('div');
+        const date = new Date(year, month, day);
+        date.setHours(0, 0, 0, 0);
+        let className = 'calendar-day';
+        if (date.getTime() === today.getTime()) className += ' today';
+        if (date.getTime() === calendarSelectedDate.getTime()) className += ' selected';
+        el.className = className;
+        el.textContent = day;
+        el.onclick = () => selectDate(year, month, day);
+        container.appendChild(el);
+      }
+
+      // 下月日期
+      const remaining = (7 - ((firstDay + daysInMonth) % 7)) % 7;
+      for (let day = 1; day <= remaining; day++) {
+        const el = document.createElement('div');
+        el.className = 'calendar-day other-month';
+        el.textContent = day;
+        el.onclick = () => selectDate(year, month + 1, day);
+        container.appendChild(el);
+      }
+
+      lucide.createIcons();
+    }
+
+    // 点击日历外部关闭
+    const calendarPopup = document.getElementById('calendar-popup');
+    if (calendarPopup) {
+      calendarPopup.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      const popup = document.getElementById('calendar-popup');
+      const dateSelector = document.querySelector('#diary-date')?.parentElement;
+      if (popup && popup.classList.contains('show') &&
+          !popup.contains(e.target) &&
+          dateSelector && !dateSelector.contains(e.target)) {
+        popup.classList.remove('show');
+      }
+    });
+
+    // 切换开关
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        this.classList.toggle('on');
+      });
+    });
+
+    // 分类 pill 切换
+    document.querySelectorAll('.category-pill').forEach(pill => {
+      pill.addEventListener('click', function() {
+        this.parentElement.querySelectorAll('.category-pill').forEach(p => {
+          p.classList.remove('active', 'bg-primary-100');
+          p.classList.add('bg-white', 'shadow-card');
+        });
+        this.classList.add('active', 'bg-primary-100');
+        this.classList.remove('bg-white', 'shadow-card');
+      });
+    });
+
+    // Chart.js 图表
+    const chartColors = {
+      primary: '#FBBF24',
+      primaryLight: '#FDE68A',
+      orange: '#FB923C',
+      green: '#4ADE80',
+      blue: '#60A5FA',
+      text: '#451A03'
+    };
+
+    // 体重曲线
+    const weightCtx = document.getElementById('weightChart');
+    if (weightCtx) {
+      new Chart(weightCtx, {
+        type: 'bar',
+        data: {
+          labels: ['5/25', '5/30', '6/4', '6/9', '6/14', '6/19', '6/24'],
+          datasets: [
+            {
+              label: '体重(kg)',
+              data: [29.2, 29.0, 28.9, 28.7, 28.6, 28.5, 28.5],
+              type: 'line',
+              borderColor: chartColors.primary,
+              backgroundColor: '#FFF',
+              borderWidth: 2.5,
+              pointBackgroundColor: '#FFF',
+              pointBorderColor: chartColors.primary,
+              pointBorderWidth: 2,
+              pointRadius: 5,
+              tension: 0.3,
+              yAxisID: 'y-weight',
+              order: 1
+            },
+            {
+              label: '食量(g)',
+              data: [420, 520, 380, 460, 390, 430, 450],
+              type: 'bar',
+              backgroundColor: chartColors.primaryLight,
+              hoverBackgroundColor: chartColors.primary,
+              borderRadius: 6,
+              barThickness: 16,
+              yAxisID: 'y-food',
+              order: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                pointStyle: 'circle',
+                color: chartColors.text,
+                font: { size: 11 }
+              }
+            }
+          },
+          scales: {
+            'y-weight': {
+              type: 'linear',
+              position: 'right',
+              min: 28,
+              max: 30,
+              grid: { display: false },
+              ticks: { color: chartColors.text, font: { size: 10 } },
+              title: { display: true, text: 'kg', color: '#92400E', font: { size: 9 } }
+            },
+            'y-food': {
+              type: 'linear',
+              position: 'left',
+              min: 0,
+              max: 600,
+              grid: { color: 'rgba(251, 191, 36, 0.1)' },
+              ticks: { color: chartColors.text, font: { size: 10 } },
+              title: { display: true, text: 'g', color: '#92400E', font: { size: 9 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: chartColors.text, font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // 饮食结构饼图
+    const dietCtx = document.getElementById('dietChart');
+    if (dietCtx) {
+      new Chart(dietCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['主粮', '鲜粮', '零食'],
+          datasets: [{
+            data: [55, 35, 10],
+            backgroundColor: [chartColors.primary, chartColors.orange, chartColors.green],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { color: chartColors.text, font: { size: 10 }, boxWidth: 10 }
+            }
+          }
+        }
+      });
+    }
+  </script>
+  <script src="chat.js"></script>
+
+<div id="toast" class="toast"></div>
+</body>
+</html>
