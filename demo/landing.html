@@ -14,312 +14,307 @@
     theme: {
       extend: {
         colors: {
-          primary: { 50:'#FFF7ED',100:'#FFEDD5',200:'#FED7AA',300:'#FDBA74',400:'#FB923C',500:'#F97316',600:'#EA580C',700:'#C2410C',800:'#9A3412',900:'#7C2D12' },
-          warm: { cream:'#FFFDF7', card:'#FFFFFF', text:'#451A03', muted:'#92400E', border:'#FDE68A' }
+          brand: {
+            50:  '#FFFDF5',
+            100: '#FFF8E1',
+            200: '#FEF0C2',
+            300: '#FDE68A',
+            400: '#FCD34D',
+            500: '#FBBF24',
+            600: '#F59E0B',
+            700: '#B45309',
+            800: '#92400E',
+            900: '#78350F',
+          }
         },
         fontFamily: {
           heading: ['Varela Round','sans-serif'],
           body: ['Nunito Sans','sans-serif'],
-        },
-        borderRadius: { '2xl':'1rem','3xl':'1.5rem','4xl':'2rem' },
+        }
       }
     }
   }
 </script>
 <style>
   * { -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'Nunito Sans', sans-serif; background: #FFF7ED; overflow-x: hidden; }
+  body { font-family: 'Nunito Sans', sans-serif; background: #FFFDF5; overflow-x: hidden; }
 
   /* Claymorphism */
   .clay {
     background: #FFFFFF;
     border-radius: 24px;
-    border: 3px solid #FFEDD5;
+    border: 2px solid #FEF0C2;
     box-shadow:
-      0 8px 32px rgba(249,115,22,0.12),
-      inset 0 1px 0 rgba(255,255,255,0.8);
+      0 6px 24px rgba(251,191,36,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.9);
   }
   .clay-sm {
     border-radius: 16px;
-    border: 2px solid #FFEDD5;
+    border: 2px solid #FEF0C2;
     box-shadow:
-      0 4px 16px rgba(249,115,22,0.10),
-      inset 0 1px 0 rgba(255,255,255,0.6);
+      0 3px 12px rgba(251,191,36,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.7);
   }
   .clay-btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 14px 32px; border-radius: 20px; font-weight: 700; font-size: 16px;
-    border: 3px solid #F97316; cursor: pointer; transition: all 0.2s ease;
-    background: linear-gradient(180deg, #FB923C 0%, #F97316 100%);
-    color: #FFFFFF;
-    box-shadow: 0 6px 24px rgba(249,115,22,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+    border: 1px solid #FBBF24; cursor: pointer; transition: all 0.2s ease;
+    background: linear-gradient(180deg, #FCD34D 0%, #FBBF24 100%);
+    color: #78350F;
+    box-shadow: 0 4px 20px rgba(251,191,36,0.30);
   }
-  .clay-btn:active { transform: translateY(2px); box-shadow: 0 2px 8px rgba(249,115,22,0.25); }
+  .clay-btn:active { transform: translateY(2px); box-shadow: 0 2px 8px rgba(251,191,36,0.20); }
   .clay-btn.outline {
-    background: #FFFFFF; color: #F97316;
-    border: 3px solid #FED7AA;
-    box-shadow: 0 4px 16px rgba(249,115,22,0.10), inset 0 1px 0 rgba(255,255,255,0.8);
+    background: #FFFFFF; color: #B45309;
+    border: 2px solid #FDE68A;
+    box-shadow: 0 3px 12px rgba(251,191,36,0.08);
   }
 
-  /* Float animation */
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-  .float { animation: float 4s ease-in-out infinite; }
-  .float-delay { animation: float 5s ease-in-out 2s infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+  .float { animation: float 5s ease-in-out infinite; }
+  .float-delay { animation: float 6s ease-in-out 2s infinite; }
 
-  /* Clouds */
-  .cloud {
-    position: absolute; background: #FFFFFF; border-radius: 60px;
-    box-shadow: 0 4px 20px rgba(249,115,22,0.08);
-  }
-  .cloud::before, .cloud::after {
-    content: ''; position: absolute; background: #FFFFFF; border-radius: 50%;
-  }
-
-  /* Pet avatar floating cards */
   .pet-float-card {
-    position: absolute; background: #FFFFFF; border-radius: 20px;
-    padding: 12px 18px; display: flex; align-items: center; gap: 10px;
-    box-shadow: 0 6px 24px rgba(249,115,22,0.12);
-    border: 2px solid #FFEDD5; font-size: 13px; font-weight: 600; color: #9A3412;
-  }
-
-  .hero-gradient {
-    background: radial-gradient(ellipse 80% 60% at 50% 30%, #FED7AA 0%, #FFF7ED 60%, #FFEDD5 100%);
+    position: absolute; background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px); border-radius: 18px;
+    padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 4px 20px rgba(180,83,9,0.10);
+    border: 1px solid rgba(253,230,138,0.6); font-size: 13px; font-weight: 600; color: #78350F;
   }
 
   .app-mockup {
-    background: #FFFBEB; border-radius: 28px; overflow: hidden;
-    border: 3px solid #FED7AA;
-    box-shadow: 0 12px 48px rgba(249,115,22,0.18);
+    background: #FFFDF5; border-radius: 32px; overflow: hidden;
+    border: 2px solid #FDE68A;
+    box-shadow: 0 16px 60px rgba(180,83,9,0.15);
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 16px; background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(6px); border-radius: 30px;
+    border: 1px solid rgba(253,230,138,0.5);
+    font-size: 13px; font-weight: 600; color: #92400E;
   }
 
   @media (max-width: 768px) {
-    .hero-gradient { background: radial-gradient(ellipse 100% 50% at 50% 20%, #FED7AA 0%, #FFF7ED 50%, #FFEDD5 100%); }
+    .app-mockup { max-width: 280px; }
   }
 </style>
 </head>
-<body>
+<body class="text-brand-800">
 
 <!-- ===== HERO ===== -->
-<section class="hero-gradient min-h-screen flex items-center relative overflow-hidden">
-  <!-- Floating clouds -->
-  <div class="cloud w-32 h-10 top-24 left-[8%] opacity-70 float" style="border-radius:60px"></div>
-  <div class="cloud w-24 h-8 top-40 right-[12%] opacity-60 float-delay" style="border-radius:50px"></div>
-  <div class="cloud w-20 h-6 top-20 right-[30%] opacity-50" style="border-radius:40px; animation: float 6s ease-in-out 1s infinite;"></div>
+<section class="relative min-h-screen flex items-center overflow-hidden" style="background: linear-gradient(180deg, #FFF8E1 0%, #FFFDF5 40%, #FFFDF5 100%);">
+  <!-- Background image -->
+  <div class="absolute inset-0 z-0">
+    <img src="hero-bg.png" alt="" class="w-full h-full object-cover opacity-100" style="object-position: center top;">
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(255,248,225,0.0) 0%, rgba(255,248,225,0.25) 50%, rgba(255,253,245,0.85) 85%, #FFFDF5 100%);"></div>
+  </div>
 
-  <div class="max-w-6xl mx-auto px-6 py-20 relative z-10 w-full">
+  <div class="max-w-6xl mx-auto px-6 py-16 relative z-10 w-full">
     <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
       <!-- Left: Text -->
-      <div class="flex-1 text-center lg:text-left">
-        <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 rounded-full mb-6 border-2 border-primary-200 clay-sm">
-          <div class="w-3 h-3 bg-primary-500 rounded-full animate-pulse"></div>
-          <span class="text-sm font-semibold text-primary-700">AI 驱动 · 专属于你的宠物饮食顾问</span>
+      <div class="flex-1 text-center lg:text-left lg:pt-8">
+        <div class="hero-badge mb-6 mx-auto lg:mx-0">
+          <div class="w-2.5 h-2.5 bg-brand-500 rounded-full"></div>
+          AI 驱动 · 专属于你的宠物饮食顾问
         </div>
 
-        <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-primary-800 mb-4">
+        <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-brand-800 mb-5">
           给毛孩子<br>
           <span class="relative inline-block">
-            <span class="relative z-10 text-primary-800">最懂它的每一餐</span>
-            <span class="absolute bottom-2 left-0 right-0 h-4 bg-primary-200 rounded-full -z-0 opacity-50"></span>
+            <span class="relative z-10">最懂它的每一餐</span>
+            <span class="absolute -bottom-1 left-0 right-0 h-5 bg-brand-200/60 rounded-full -z-0"></span>
           </span>
         </h1>
 
-        <p class="text-lg sm:text-xl text-primary-700/80 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+        <p class="text-lg sm:text-xl text-brand-700/70 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
           上传宠物档案，AI 立刻为你生成专属食谱。<br>
           告诉你买什么、去哪买、怎么买最划算。
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-          <button class="clay-btn" onclick="window.open('/','_blank')">
+          <a href="/" class="clay-btn text-lg px-10 py-4">
             立即体验
             <i data-lucide="arrow-right" class="w-5 h-5"></i>
-          </button>
-          <button class="clay-btn outline" onclick="document.getElementById('demo-video').scrollIntoView({behavior:'smooth'})">
-            看演示
-            <i data-lucide="play" class="w-5 h-5"></i>
+          </a>
+          <button class="clay-btn outline text-lg px-10 py-4" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+            了解更多
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
           </button>
         </div>
 
-        <!-- Trust mini badges -->
-        <div class="flex items-center gap-6 mt-8 justify-center lg:justify-start text-sm text-primary-600">
-          <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-primary-500"></i> 免费试用</div>
-          <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-primary-500"></i> 无需下载App</div>
-          <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-primary-500"></i> 已服务 2000+ 宠主</div>
+        <div class="flex items-center gap-6 mt-8 justify-center lg:justify-start text-sm text-brand-600">
+          <div class="flex items-center gap-1.5"><div class="w-5 h-5 rounded-full bg-brand-100 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-brand-600"></i></div>免费试用</div>
+          <div class="flex items-center gap-1.5"><div class="w-5 h-5 rounded-full bg-brand-100 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-brand-600"></i></div>无需下载App</div>
         </div>
       </div>
 
-      <!-- Right: Phone Mockup + Floating Pets -->
-      <div class="flex-1 relative flex justify-center">
+      <!-- Right: Phone Mockup -->
+      <div class="flex-1 relative flex justify-center lg:justify-end">
         <!-- Floating pet cards -->
-        <div class="pet-float-card top-0 left-0 float" style="top:-20px;left:-10px">
-          <span class="text-2xl">🐕</span>
-          布丁的鲜粮计划已生成
+        <div class="pet-float-card top-0 left-0 float z-20" style="top:-10px;left:0px">
+          <span class="text-2xl">🐕</span> 布丁的鲜粮计划已生成
         </div>
-        <div class="pet-float-card bottom-10 right-0 float-delay" style="bottom:30px;right:-20px">
-          <span class="text-2xl">🐈</span>
-          汤圆的猫粮评测完成
+        <div class="pet-float-card bottom-10 right-0 float-delay z-20" style="bottom:10px;right:-10px">
+          <span class="text-2xl">🐈</span> 汤圆的猫粮评测完成
         </div>
 
         <!-- App Mockup -->
-        <div class="app-mockup w-[280px] sm:w-[320px] shadow-2xl">
+        <div class="app-mockup w-[280px] sm:w-[320px] shadow-2xl relative z-10">
           <!-- Status bar -->
-          <div class="flex justify-between items-center px-5 py-2 bg-primary-50">
-            <span class="text-xs font-bold text-primary-700">9:41</span>
-            <div class="flex gap-1 items-center">
-              <i data-lucide="signal" class="w-3 h-3 text-primary-500"></i>
-              <i data-lucide="wifi" class="w-3 h-3 text-primary-500"></i>
-              <i data-lucide="battery-full" class="w-4 h-4 text-primary-500"></i>
+          <div class="flex justify-between items-center px-5 py-2.5 bg-brand-50/80">
+            <span class="text-xs font-bold text-brand-700">9:41</span>
+            <div class="flex gap-1 items-center text-brand-400">
+              <i data-lucide="signal" class="w-3 h-3"></i>
+              <i data-lucide="wifi" class="w-3 h-3"></i>
+              <i data-lucide="battery-full" class="w-4 h-4"></i>
             </div>
           </div>
-          <!-- Screen content -->
-          <div class="p-4 space-y-3 bg-[#FFFBEB]">
+          <!-- Screen -->
+          <div class="p-4 space-y-3 bg-brand-50/40">
             <!-- Pet card -->
-            <div class="bg-white rounded-2xl p-3 flex items-center gap-3 border-2 border-primary-100 shadow-sm">
-              <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-xl">🐕</div>
+            <div class="bg-white rounded-2xl p-3 flex items-center gap-3 border border-brand-100">
+              <div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-xl">🐕</div>
               <div class="flex-1">
-                <div class="font-heading font-bold text-sm text-primary-800">布丁 <span class="text-xs font-normal text-primary-500">金毛·3岁</span></div>
-                <div class="text-xs text-primary-600">28.5kg · ♂ 已绝育</div>
+                <div class="font-heading font-bold text-sm text-brand-800">布丁 <span class="text-xs font-normal text-brand-500">金毛·3岁</span></div>
+                <div class="text-xs text-brand-600">28.5kg · ♂ 已绝育</div>
               </div>
-              <span class="px-2 py-1 bg-red-50 text-red-600 text-xs rounded-lg font-semibold">鸡肉过敏</span>
+              <span class="px-2 py-0.5 bg-red-50 text-red-600 text-xs rounded-lg font-semibold border border-red-100">鸡肉过敏</span>
             </div>
-            <!-- AI recipe card -->
-            <div class="bg-white rounded-2xl p-3 border-2 border-primary-100 shadow-sm">
+            <!-- AI recipe -->
+            <div class="bg-white rounded-2xl p-3 border border-brand-100">
               <div class="flex items-center gap-2 mb-2">
-                <div class="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center"><i data-lucide="sparkles" class="w-3 h-3 text-primary-600"></i></div>
-                <span class="font-heading font-bold text-xs text-primary-800">今日推荐食谱</span>
+                <div class="w-5 h-5 rounded-full bg-brand-100 flex items-center justify-center"><i data-lucide="sparkles" class="w-3 h-3 text-brand-600"></i></div>
+                <span class="font-heading font-bold text-xs text-brand-800">今日推荐食谱</span>
               </div>
-              <div class="text-xs text-primary-700 space-y-1">
-                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>早餐：三文鱼粮 200g</div>
-                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>午餐：火鸡胸肉 80g</div>
-                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-400 rounded-full"></span>晚餐：南瓜牛肉粥 150g</div>
+              <div class="text-xs text-brand-700 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-brand-400 rounded-full"></span>早餐：三文鱼粮 200g</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-brand-400 rounded-full"></span>午餐：火鸡胸肉 80g</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-brand-400 rounded-full"></span>晚餐：南瓜牛肉粥 150g</div>
               </div>
             </div>
             <!-- Quick entry -->
             <div class="grid grid-cols-3 gap-2">
-              <div class="bg-primary-100 rounded-xl p-2 text-center text-xs font-semibold text-primary-700 border border-primary-200">📝 记录吃饭</div>
-              <div class="bg-orange-100 rounded-xl p-2 text-center text-xs font-semibold text-orange-700 border border-orange-200">💬 问AI吃什么</div>
-              <div class="bg-green-100 rounded-xl p-2 text-center text-xs font-semibold text-green-700 border border-green-200">🛒 买粮食</div>
+              <div class="bg-brand-50 rounded-xl p-2 text-center text-[11px] font-semibold text-brand-700 border border-brand-100">记录吃饭</div>
+              <div class="bg-brand-100/50 rounded-xl p-2 text-center text-[11px] font-semibold text-brand-700 border border-brand-200">问AI吃什么</div>
+              <div class="bg-brand-200/40 rounded-xl p-2 text-center text-[11px] font-semibold text-brand-700 border border-brand-200">买粮食</div>
             </div>
           </div>
           <!-- Bottom tabs -->
-          <div class="flex justify-around py-2 px-4 bg-white border-t border-primary-100">
-            <div class="text-center"><i data-lucide="home" class="w-4 h-4 mx-auto text-primary-500"></i><span class="text-[9px] font-semibold text-primary-500">首页</span></div>
-            <div class="text-center"><i data-lucide="notebook-pen" class="w-4 h-4 mx-auto text-primary-300"></i><span class="text-[9px] text-primary-300">日记</span></div>
-            <div class="text-center"><i data-lucide="message-circle" class="w-4 h-4 mx-auto text-primary-300"></i><span class="text-[9px] text-primary-300">吃饭</span></div>
-            <div class="text-center"><i data-lucide="compass" class="w-4 h-4 mx-auto text-primary-300"></i><span class="text-[9px] text-primary-300">发现</span></div>
-            <div class="text-center"><i data-lucide="user" class="w-4 h-4 mx-auto text-primary-300"></i><span class="text-[9px] text-primary-300">我的</span></div>
+          <div class="flex justify-around py-2.5 px-4 bg-white border-t border-brand-100">
+            <div class="text-center"><i data-lucide="home" class="w-4 h-4 mx-auto text-brand-500"></i><span class="text-[9px] font-semibold text-brand-500">首页</span></div>
+            <div class="text-center"><i data-lucide="notebook-pen" class="w-4 h-4 mx-auto text-gray-300"></i><span class="text-[9px] text-gray-300">日记</span></div>
+            <div class="text-center"><i data-lucide="message-circle" class="w-4 h-4 mx-auto text-gray-300"></i><span class="text-[9px] text-gray-300">吃饭</span></div>
+            <div class="text-center"><i data-lucide="compass" class="w-4 h-4 mx-auto text-gray-300"></i><span class="text-[9px] text-gray-300">发现</span></div>
+            <div class="text-center"><i data-lucide="user" class="w-4 h-4 mx-auto text-gray-300"></i><span class="text-[9px] text-gray-300">我的</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Bottom wave divider -->
-  <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-primary-100/50 to-transparent"></div>
 </section>
 
-<!-- ===== PROBLEM / SOLUTION ===== -->
-<section class="py-20 px-6 relative">
+<!-- ===== FEATURES ===== -->
+<section id="features" class="py-20 px-6 bg-brand-50/50">
   <div class="max-w-5xl mx-auto text-center mb-16">
-    <span class="px-4 py-1.5 bg-primary-100 text-primary-700 text-sm font-bold rounded-full border-2 border-primary-200 clay-sm">为什么需要宠食记？</span>
-    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-primary-800 mt-6 mb-4">想给毛孩子最好的，但不知道该喂什么？</h2>
-    <p class="text-primary-600 text-lg max-w-2xl mx-auto">网上信息碎片化，品牌太多选不清楚，自己想动手做鲜粮又怕配比不对。<br>宠食记用 AI 帮你在几分钟内搞定这一切。</p>
+    <span class="px-4 py-1.5 bg-white text-brand-700 text-sm font-bold rounded-full border border-brand-200 clay-sm">为什么需要宠食记？</span>
+    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-brand-800 mt-6 mb-4">想给毛孩子最好的，但不知道该喂什么？</h2>
+    <p class="text-brand-600/70 text-lg max-w-2xl mx-auto">网上信息碎片化，品牌太多选不清楚，想自己动手做鲜粮又怕配比不对。<br>宠食记用 AI 帮你在几分钟内搞定这一切。</p>
   </div>
 
-  <!-- Feature cards -->
-  <div class="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
     <!-- Card 1 -->
-    <div class="clay p-6 hover:border-primary-300 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-2xl bg-primary-100 flex items-center justify-center mb-4 border-2 border-primary-200 group-hover:scale-110 transition-transform">
-        <i data-lucide="sparkles" class="w-7 h-7 text-primary-600"></i>
+    <div class="clay p-6 hover:border-brand-300 transition-all cursor-pointer group">
+      <div class="w-12 h-12 rounded-2xl bg-brand-100 flex items-center justify-center mb-4 border border-brand-200 group-hover:scale-110 transition-transform">
+        <i data-lucide="sparkles" class="w-6 h-6 text-brand-600"></i>
       </div>
-      <h3 class="font-heading text-lg font-bold text-primary-800 mb-2">AI 专属食谱生成</h3>
-      <p class="text-primary-600 text-sm leading-relaxed">输入宠物品种、年龄、体重、过敏史，AI 即刻生成营养均衡的个性化食谱。不是通用模板——是只属于你的毛孩子的方案。</p>
+      <h3 class="font-heading text-lg font-bold text-brand-800 mb-2">AI 专属食谱生成</h3>
+      <p class="text-brand-600/70 text-sm leading-relaxed">输入宠物品种、年龄、体重、过敏史，AI 即刻生成营养均衡的个性化食谱——只属于你的毛孩子的方案。</p>
     </div>
 
     <!-- Card 2 -->
-    <div class="clay p-6 hover:border-primary-300 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mb-4 border-2 border-green-200 group-hover:scale-110 transition-transform">
-        <i data-lucide="shopping-cart" class="w-7 h-7 text-green-600"></i>
+    <div class="clay p-6 hover:border-brand-300 transition-all cursor-pointer group">
+      <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center mb-4 border border-green-100 group-hover:scale-110 transition-transform">
+        <i data-lucide="shopping-cart" class="w-6 h-6 text-green-600"></i>
       </div>
-      <h3 class="font-heading text-lg font-bold text-primary-800 mb-2">多平台一键比价</h3>
-      <p class="text-primary-600 text-sm leading-relaxed">盒马、永辉、美团闪购、叮咚买菜、淘宝、京东——AI 自动对比各平台价格和配送时效，帮你找到最优购买方案。</p>
+      <h3 class="font-heading text-lg font-bold text-brand-800 mb-2">多平台一键比价</h3>
+      <p class="text-brand-600/70 text-sm leading-relaxed">盒马、永辉、美团闪购、叮咚、淘宝、京东——AI 自动对比各平台价格和配送时效，找到最优购买方案。</p>
     </div>
 
     <!-- Card 3 -->
-    <div class="clay p-6 hover:border-primary-300 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mb-4 border-2 border-blue-200 group-hover:scale-110 transition-transform">
-        <i data-lucide="shield-check" class="w-7 h-7 text-blue-600"></i>
+    <div class="clay p-6 hover:border-brand-300 transition-all cursor-pointer group">
+      <div class="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mb-4 border border-red-100 group-hover:scale-110 transition-transform">
+        <i data-lucide="shield-check" class="w-6 h-6 text-red-500"></i>
       </div>
-      <h3 class="font-heading text-lg font-bold text-primary-800 mb-2">食材安全审查</h3>
-      <p class="text-primary-600 text-sm leading-relaxed">AI 自动检测食材过敏风险（如"布丁对鸡肉过敏"），标注购买注意事项和禁忌提醒。确保每一份食材对毛孩子都是安全的。</p>
+      <h3 class="font-heading text-lg font-bold text-brand-800 mb-2">食材安全审查</h3>
+      <p class="text-brand-600/70 text-sm leading-relaxed">AI 自动检测食材过敏风险，标注购买注意事项和禁忌提醒。确保每一份食材对毛孩子都是安全的。</p>
     </div>
 
     <!-- Card 4 -->
-    <div class="clay p-6 hover:border-primary-300 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center mb-4 border-2 border-purple-200 group-hover:scale-110 transition-transform">
-        <i data-lucide="book-open" class="w-7 h-7 text-purple-600"></i>
+    <div class="clay p-6 hover:border-brand-300 transition-all cursor-pointer group">
+      <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center mb-4 border border-purple-100 group-hover:scale-110 transition-transform">
+        <i data-lucide="book-open" class="w-6 h-6 text-purple-600"></i>
       </div>
-      <h3 class="font-heading text-lg font-bold text-primary-800 mb-2">饮食知识沉淀</h3>
-      <p class="text-primary-600 text-sm leading-relaxed">AI 对话中生成的每份食谱、每次食材安全判断都会被保存到"食记"，随时回顾、编辑、再次使用。你的饮食知识库。</p>
+      <h3 class="font-heading text-lg font-bold text-brand-800 mb-2">饮食知识沉淀</h3>
+      <p class="text-brand-600/70 text-sm leading-relaxed">每份食谱和每次食材判断都会被保存到"食记"，随时回顾、编辑、再次使用——构建你的养宠知识库。</p>
     </div>
 
     <!-- Card 5 -->
-    <div class="clay p-6 hover:border-primary-300 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center mb-4 border-2 border-orange-200 group-hover:scale-110 transition-transform">
-        <i data-lucide="bar-chart-3" class="w-7 h-7 text-orange-600"></i>
+    <div class="clay p-6 hover:border-brand-300 transition-all cursor-pointer group">
+      <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center mb-4 border border-amber-100 group-hover:scale-110 transition-transform">
+        <i data-lucide="bar-chart-3" class="w-6 h-6 text-amber-600"></i>
       </div>
-      <h3 class="font-heading text-lg font-bold text-primary-800 mb-2">健康趋势追踪</h3>
-      <p class="text-primary-600 text-sm leading-relaxed">体重变化曲线、饮食结构分析、AI 健康简评——帮你持续了解宠物的状态变化，及时调整饮食方案。</p>
+      <h3 class="font-heading text-lg font-bold text-brand-800 mb-2">健康趋势追踪</h3>
+      <p class="text-brand-600/70 text-sm leading-relaxed">体重变化曲线、饮食结构分析、AI 健康简评——持续了解宠物状态变化，及时调整饮食方案。</p>
     </div>
 
     <!-- Card 6 -->
-    <div class="clay p-6 hover:border-primary-300 transition-all cursor-pointer group">
-      <div class="w-14 h-14 rounded-2xl bg-teal-100 flex items-center justify-center mb-4 border-2 border-teal-200 group-hover:scale-110 transition-transform">
-        <i data-lucide="smartphone" class="w-7 h-7 text-teal-600"></i>
+    <div class="clay p-6 hover:border-brand-300 transition-all cursor-pointer group">
+      <div class="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center mb-4 border border-teal-100 group-hover:scale-110 transition-transform">
+        <i data-lucide="smartphone" class="w-6 h-6 text-teal-600"></i>
       </div>
-      <h3 class="font-heading text-lg font-bold text-primary-800 mb-2">手机随时使用</h3>
-      <p class="text-primary-600 text-sm leading-relaxed">无需下载 App，手机浏览器打开即用。界面针对拇指触控优化，所有按钮 ≥ 44px——随时随地管理宠物饮食。</p>
+      <h3 class="font-heading text-lg font-bold text-brand-800 mb-2">手机随时使用</h3>
+      <p class="text-brand-600/70 text-sm leading-relaxed">无需下载 App，手机浏览器打开即用。界面针对拇指触控优化——随时随地管理宠物饮食。</p>
     </div>
   </div>
 </section>
 
-<!-- ===== DEMO SHOWCASE ===== -->
-<section id="demo-video" class="py-20 px-6 bg-primary-100/30">
+<!-- ===== HOW IT WORKS ===== -->
+<section class="py-20 px-6 bg-white">
   <div class="max-w-5xl mx-auto text-center mb-12">
-    <span class="px-4 py-1.5 bg-white text-primary-700 text-sm font-bold rounded-full border-2 border-primary-200 clay-sm">看看它怎么工作</span>
-    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-primary-800 mt-6 mb-4">从"吃什么"到"买齐食材"，全程AI辅助</h2>
+    <span class="px-4 py-1.5 bg-brand-100 text-brand-700 text-sm font-bold rounded-full border border-brand-200 clay-sm">看看它怎么工作</span>
+    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-brand-800 mt-6 mb-4">从"吃什么"到"买齐食材"，全程AI辅助</h2>
   </div>
 
-  <!-- Demo steps -->
-  <div class="max-w-4xl mx-auto grid sm:grid-cols-3 gap-6">
+  <div class="max-w-4xl mx-auto grid sm:grid-cols-3 gap-5">
     <div class="clay p-6 text-center">
-      <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-4 text-lg font-heading font-bold text-primary-600 border-2 border-primary-200">1</div>
-      <h4 class="font-heading font-bold text-primary-800 mb-2">告诉AI你的宠物</h4>
-      <p class="text-sm text-primary-600">输入品种、体重、过敏史——就像和营养师聊天一样简单</p>
+      <div class="w-11 h-11 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-4 text-base font-heading font-bold text-brand-600 border border-brand-200">1</div>
+      <h4 class="font-heading font-bold text-brand-800 mb-2">告诉AI你的宠物</h4>
+      <p class="text-sm text-brand-600/70">输入品种、体重、过敏史<br>像聊天一样简单</p>
     </div>
     <div class="clay p-6 text-center">
-      <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-4 text-lg font-heading font-bold text-primary-600 border-2 border-primary-200">2</div>
-      <h4 class="font-heading font-bold text-primary-800 mb-2">获取专属食谱+购买方案</h4>
-      <p class="text-sm text-primary-600">AI 生成食谱 + 多平台比价 + 过敏提醒，一步到位</p>
+      <div class="w-11 h-11 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-4 text-base font-heading font-bold text-brand-600 border border-brand-200">2</div>
+      <h4 class="font-heading font-bold text-brand-800 mb-2">获取食谱+购买方案</h4>
+      <p class="text-sm text-brand-600/70">AI 食谱 + 多平台比价<br>+ 过敏提醒，一步到位</p>
     </div>
     <div class="clay p-6 text-center">
-      <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-4 text-lg font-heading font-bold text-primary-600 border-2 border-primary-200">3</div>
-      <h4 class="font-heading font-bold text-primary-800 mb-2">一键跳转买齐食材</h4>
-      <p class="text-sm text-primary-600">点一下跳转盒马/永辉/淘宝，食材30分钟送到家</p>
+      <div class="w-11 h-11 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-4 text-base font-heading font-bold text-brand-600 border border-brand-200">3</div>
+      <h4 class="font-heading font-bold text-brand-800 mb-2">一键跳转买齐食材</h4>
+      <p class="text-sm text-brand-600/70">盒马/永辉/淘宝一键跳转<br>食材 30 分钟送到家</p>
     </div>
   </div>
 </section>
 
 <!-- ===== TESTIMONIALS ===== -->
-<section class="py-20 px-6">
+<section class="py-20 px-6 bg-brand-50/50">
   <div class="max-w-5xl mx-auto text-center mb-12">
-    <span class="px-4 py-1.5 bg-primary-100 text-primary-700 text-sm font-bold rounded-full border-2 border-primary-200 clay-sm">用户怎么说</span>
-    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-primary-800 mt-6">被 2000+ 宠主信赖</h2>
+    <span class="px-4 py-1.5 bg-white text-brand-700 text-sm font-bold rounded-full border border-brand-200 clay-sm">用户怎么说</span>
+    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-brand-800 mt-6">被 2000+ 宠主信赖</h2>
   </div>
 
-  <div class="max-w-5xl mx-auto grid sm:grid-cols-3 gap-6">
+  <div class="max-w-5xl mx-auto grid sm:grid-cols-3 gap-5">
     <div class="clay p-6">
       <div class="flex items-center gap-1 mb-3">
         <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
@@ -328,10 +323,10 @@
         <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
         <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
       </div>
-      <p class="text-sm text-primary-700 leading-relaxed mb-4 italic">"我们家柯基之前一直软便，试了好几种粮都不行。用宠食记出方案之后，AI 直接告诉我换成三文鱼粮+火鸡胸肉，软便很快就好了。"</p>
+      <p class="text-sm text-brand-700 leading-relaxed mb-4 italic">"我们家柯基之前一直软便，试了好几种粮都不行。用宠食记出方案之后，AI 直接告诉我换成三文鱼粮+火鸡胸肉，软便很快就好了。"</p>
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-sm">🐕</div>
-        <div><div class="font-semibold text-sm text-primary-800">柯基麻麻</div><div class="text-xs text-primary-500">养宠 2 年 · 深圳</div></div>
+        <div class="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-sm border border-brand-200">🐕</div>
+        <div><div class="font-semibold text-sm text-brand-800">柯基麻麻</div><div class="text-xs text-brand-500">养宠 2 年 · 深圳</div></div>
       </div>
     </div>
 
@@ -343,10 +338,10 @@
         <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
         <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
       </div>
-      <p class="text-sm text-primary-700 leading-relaxed mb-4 italic">"最惊喜的是购物车功能。AI 生成食谱后一键比价——盒马鸡胸肉 12 块、永辉 11.5。以前要一个个 App 搜，现在一秒钟搞定。"</p>
+      <p class="text-sm text-brand-700 leading-relaxed mb-4 italic">"最惊喜的是购物车功能。AI 生成食谱后一键比价——盒马 12 块、永辉 11.5。以前要一个个 App 搜，现在一秒钟搞定。"</p>
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm">🐈</div>
-        <div><div class="font-semibold text-sm text-primary-800">三十而已的猫奴</div><div class="text-xs text-primary-500">养宠 5 年 · 上海</div></div>
+        <div class="w-9 h-9 rounded-full bg-brand-200/50 flex items-center justify-center text-sm border border-brand-200">🐈</div>
+        <div><div class="font-semibold text-sm text-brand-800">三十而已的猫奴</div><div class="text-xs text-brand-500">养宠 5 年 · 上海</div></div>
       </div>
     </div>
 
@@ -358,41 +353,39 @@
         <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
         <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
       </div>
-      <p class="text-sm text-primary-700 leading-relaxed mb-4 italic">"之前一直想给狗做鲜粮但怕营养不均衡。宠食记把每份食材精确到克，还附了蛋壳粉配比——感觉像请了个 AI 宠物营养师。"</p>
+      <p class="text-sm text-brand-700 leading-relaxed mb-4 italic">"之前想给狗做鲜粮但怕营养不均衡。宠食记把每份食材精确到克，还附了蛋壳粉配比——感觉像请了个 AI 宠物营养师。"</p>
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-sm">🐕</div>
-        <div><div class="font-semibold text-sm text-primary-800">布丁爸说</div><div class="text-xs text-primary-500">养宠 3 年 · 成都</div></div>
+        <div class="w-9 h-9 rounded-full bg-green-50 flex items-center justify-center text-sm border border-green-100">🐕</div>
+        <div><div class="font-semibold text-sm text-brand-800">布丁爸说</div><div class="text-xs text-brand-500">养宠 3 年 · 成都</div></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ===== CTA ===== -->
-<section class="py-20 px-6 bg-gradient-to-b from-primary-100/50 to-primary-50">
+<section class="py-20 px-6 bg-gradient-to-b from-brand-50/50 to-brand-100/30">
   <div class="max-w-3xl mx-auto text-center">
-    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-primary-800 mb-4">准备好给毛孩子更好的每一餐了吗？</h2>
-    <p class="text-primary-600 text-lg mb-8">免费试用，无需下载。AI 专属食谱，多平台比价，一键购买。</p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <button class="clay-btn text-lg px-10 py-4" onclick="window.open('/','_blank')">
-        立即免费体验
-        <i data-lucide="arrow-right" class="w-5 h-5"></i>
-      </button>
-    </div>
-    <p class="text-sm text-primary-500 mt-6">目前仅支持移动端浏览器访问 · 建议用手机打开获得最佳体验</p>
+    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-brand-800 mb-4">准备好给毛孩子更好的每一餐了吗？</h2>
+    <p class="text-brand-600/70 text-lg mb-8">免费试用，无需下载。AI 专属食谱，多平台比价，一键购买。</p>
+    <a href="/" class="clay-btn text-lg px-10 py-4">
+      立即免费体验
+      <i data-lucide="arrow-right" class="w-5 h-5"></i>
+    </a>
+    <p class="text-sm text-brand-500 mt-6">建议用手机打开获得最佳体验</p>
   </div>
 </section>
 
 <!-- ===== FOOTER ===== -->
-<footer class="py-10 px-6 bg-primary-50 border-t-2 border-primary-100">
+<footer class="py-10 px-6 bg-white border-t border-brand-100">
   <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div class="font-heading font-bold text-primary-700 text-lg">🐾 宠食记 PetDiet AI</div>
-    <div class="flex items-center gap-6 text-sm text-primary-500">
-      <a href="#" class="hover:text-primary-700 transition-colors">关于我们</a>
-      <a href="#" class="hover:text-primary-700 transition-colors">用户协议</a>
-      <a href="#" class="hover:text-primary-700 transition-colors">隐私政策</a>
-      <a href="#" class="hover:text-primary-700 transition-colors">联系我们</a>
+    <div class="font-heading font-bold text-brand-700 text-lg">🐾 宠食记 PetDiet AI</div>
+    <div class="flex items-center gap-6 text-sm text-brand-500">
+      <a href="#" class="hover:text-brand-700 transition-colors">关于我们</a>
+      <a href="#" class="hover:text-brand-700 transition-colors">用户协议</a>
+      <a href="#" class="hover:text-brand-700 transition-colors">隐私政策</a>
+      <a href="#" class="hover:text-brand-700 transition-colors">联系我们</a>
     </div>
-    <div class="text-sm text-primary-400">© 2026 宠食记 PetDiet AI</div>
+    <div class="text-sm text-brand-400">© 2026 宠食记 PetDiet AI</div>
   </div>
 </footer>
 
