@@ -767,6 +767,105 @@
       .iphone-screen { border-radius: 0; }
       .dynamic-island { display: none; }
     }
+
+    /* ===== 购物车面板 ===== */
+    .cart-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 200;
+      display: none; align-items: flex-end;
+    }
+    .cart-overlay.show { display: flex; }
+    .cart-panel {
+      width: 100%; max-height: 85%; background: #FFFDF7;
+      border-radius: 24px 24px 0 0; overflow-y: auto;
+      padding: 0 0 80px 0; scrollbar-width: none;
+    }
+    .cart-panel::-webkit-scrollbar { display: none; }
+    .cart-header {
+      position: sticky; top: 0; z-index: 10;
+      background: #FFFDF7; padding: 20px 20px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #FDE68A;
+    }
+    .cart-header h2 { font-family: 'Varela Round', sans-serif; font-size: 18px; font-weight: 700; color: #451A03; }
+    .cart-header .cart-badge {
+      background: #FBBF24; color: #451A03; font-size: 12px; font-weight: 700;
+      padding: 2px 10px; border-radius: 12px;
+    }
+    .cart-body { padding: 16px; }
+    .cart-item-card {
+      background: #FFFFFF; border-radius: 16px; padding: 16px;
+      margin-bottom: 12px; box-shadow: 0 2px 12px rgba(120,53,15,0.06);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .cart-item-card.expanded { box-shadow: 0 4px 20px rgba(120,53,15,0.12); }
+    .cart-item-row { display: flex; align-items: center; gap: 12px; }
+    .cart-item-img {
+      width: 56px; height: 56px; border-radius: 14px; object-fit: cover;
+      background: #FEF3C7; flex-shrink: 0;
+    }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-size: 14px; font-weight: 700; color: #451A03; margin-bottom: 4px; }
+    .cart-item-meta { font-size: 12px; color: #92400E; }
+    .cart-item-price { text-align: right; flex-shrink: 0; }
+    .cart-item-price .price-main { font-size: 18px; font-weight: 700; color: #D97706; }
+    .cart-item-price .price-sub { font-size: 11px; color: #92400E; }
+    .cart-expand-icon { transition: transform 0.2s; margin-left: 6px; }
+    .cart-item-card.expanded .cart-expand-icon { transform: rotate(180deg); }
+
+    /* 比价面板 */
+    .cart-compare { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #FDE68A; }
+    .cart-item-card.expanded .cart-compare { display: block; }
+    .cart-compare h4 { font-size: 13px; font-weight: 700; color: #451A03; margin-bottom: 10px; }
+    .platform-list { display: flex; flex-direction: column; gap: 8px; }
+    .platform-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      background: #FFFBEB; border-radius: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .platform-row:active { background: #FEF3C7; transform: scale(0.98); }
+    .platform-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .platform-name { flex: 1; font-size: 13px; font-weight: 600; color: #451A03; }
+    .platform-price { font-size: 15px; font-weight: 700; color: #D97706; }
+    .platform-tag {
+      font-size: 10px; padding: 2px 8px; border-radius: 8px;
+      font-weight: 600; flex-shrink: 0;
+    }
+
+    /* AI总结 & 购买注意 */
+    .cart-ai-note {
+      margin-top: 12px; padding: 12px; background: #F0F9FF;
+      border-radius: 12px; border-left: 3px solid #60A5FA;
+    }
+    .cart-ai-note .note-title { font-size: 12px; font-weight: 700; color: #1E40AF; margin-bottom: 6px; }
+    .cart-ai-note .note-text { font-size: 12px; color: #1E3A5F; line-height: 1.6; }
+    .cart-warning {
+      margin-top: 8px; padding: 10px 12px; background: #FEF2F2;
+      border-radius: 10px; border-left: 3px solid #EF4444;
+    }
+    .cart-warning .warn-text { font-size: 11px; color: #DC2626; line-height: 1.5; }
+
+    .cart-empty { text-align: center; padding: 40px 20px; color: #92400E; }
+    .cart-empty i { color: #FDE68A; margin-bottom: 12px; }
+
+    /* 食物准备板块 */
+    .food-prep-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 6px; }
+    .food-prep-card {
+      background: #FFFFFF; border-radius: 14px; padding: 14px 10px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 1px 6px rgba(120,53,15,0.06); border: 1px solid #FEF3C7;
+    }
+    .food-prep-card:active { transform: scale(0.97); background: #FFFBEB; }
+    .food-prep-card .fp-icon {
+      width: 42px; height: 42px; border-radius: 12px; margin: 0 auto 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .food-prep-card .fp-title { font-size: 12px; font-weight: 600; color: #451A03; }
+    .food-prep-card .fp-sub { font-size: 10px; color: #92400E; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -1756,7 +1855,7 @@
                 <div class="icon-box bg-pink-100"><i data-lucide="clipboard-list" class="w-6 h-6 text-pink-600"></i></div>
                 <span class="icon-label">我的订单</span>
               </div>
-              <div class="mall-grid-icon">
+              <div class="mall-grid-icon" onclick="openCart()">
                 <div class="icon-box bg-yellow-100"><i data-lucide="shopping-cart" class="w-6 h-6 text-yellow-600"></i></div>
                 <span class="icon-label">购物车</span>
               </div>
@@ -1938,6 +2037,28 @@
             </div>
           </div>
 
+          <!-- 食物准备 -->
+          <div class="section-card">
+            <h3 class="font-heading font-bold text-warm-text mb-3">🍽️ 食物准备</h3>
+            <div class="food-prep-grid">
+              <div class="food-prep-card" onclick="switchTab('eat'); setTimeout(()=>switchEatTab('notes'),300)">
+                <div class="fp-icon bg-primary-100"><i data-lucide="book-open" class="w-5 h-5 text-primary-700"></i></div>
+                <div class="fp-title">宠物食谱</div>
+                <div class="fp-sub">查看食记</div>
+              </div>
+              <div class="food-prep-card" onclick="showToast('美食记忆功能开发中')">
+                <div class="fp-icon bg-orange-100"><i data-lucide="heart" class="w-5 h-5 text-orange-700"></i></div>
+                <div class="fp-title">宠物美食记忆</div>
+                <div class="fp-sub">收藏与回顾</div>
+              </div>
+              <div class="food-prep-card" onclick="openCart()">
+                <div class="fp-icon bg-green-100"><i data-lucide="shopping-cart" class="w-5 h-5 text-green-700"></i></div>
+                <div class="fp-title">粮食购物车</div>
+                <div class="fp-sub" id="fp-cart-count">0件食材</div>
+              </div>
+            </div>
+          </div>
+
           <!-- 扩展功能 -->
           <div class="section-card">
             <h3 class="font-heading font-bold text-warm-text mb-3">扩展功能</h3>
@@ -2066,6 +2187,29 @@
           <span class="text-[10px] font-semibold leading-none -mt-0.5">我的</span>
         </button>
       </div>
+
+      <!-- 购物车面板 -->
+      <div id="cart-overlay" class="cart-overlay">
+        <div class="cart-panel" id="cart-panel">
+          <div class="cart-header">
+            <div class="flex items-center gap-2">
+              <h2>🛒 粮食购物车</h2>
+              <span class="cart-badge" id="cart-count">0件</span>
+            </div>
+            <button onclick="closeCart()" class="w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center">
+              <i data-lucide="x" class="w-5 h-5 text-warm-muted"></i>
+            </button>
+          </div>
+          <div class="cart-body" id="cart-body">
+            <div class="cart-empty" id="cart-empty">
+              <i data-lucide="shopping-cart" class="w-12 h-12 mx-auto mb-3" style="color:#FDE68A"></i>
+              <p class="font-semibold text-sm">购物车是空的</p>
+              <p class="text-xs mt-1">去"吃饭"页让AI帮你推荐食材吧</p>
+            </div>
+            <div id="cart-items"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2081,6 +2225,14 @@
     }
     updateClock();
     setInterval(updateClock, 60000);
+
+    // 购物车遮罩点击关闭
+    document.getElementById('cart-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeCart();
+    });
+
+    // 初始化购物车
+    setTimeout(() => renderCart(), 500);
 
     // Tab 切换
     function switchTab(tabName) {
@@ -2112,20 +2264,152 @@
       event.target.classList.add('active');
     }
 
-    // AI 一键加入购物车
+    // ========== 购物车系统 ==========
+    let cartItems = [];
+
+    // 初始演示数据
+    const demoSampleItems = [
+      {
+        id: 1, name: '去皮鸡胸肉', qty: '500g', img: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=120&h=120&fit=crop',
+        category: '鲜粮食材', note: '高蛋白低脂肪，适合大部分犬猫。布丁鸡肉过敏请勿购买。',
+        warning: '⚠️ 布丁对鸡肉过敏，建议替换为火鸡胸肉或鸭胸肉。AI已自动标注过敏风险，请确认后再购买。',
+        platforms: [
+          { name: '盒马', icon: '盒', color: '#1677FF', price: '¥12.8', tag: '30分钟达', tagColor: '#E8F4FD' },
+          { name: '永辉生活', icon: '永', color: '#E55C1F', price: '¥11.5', tag: '今日达', tagColor: '#FFF3E8' },
+          { name: '美团闪购', icon: '美', color: '#FFD100', price: '¥13.2', tag: '30分钟', tagColor: '#FFFDE8' },
+          { name: '京东到家', icon: '京', color: '#C91623', price: '¥14.0', tag: '1小时达', tagColor: '#FEF0F0' }
+        ]
+      },
+      {
+        id: 2, name: '贝贝南瓜', qty: '300g', img: 'https://images.unsplash.com/photo-1573246123716-6b1782bfc499?w=120&h=120&fit=crop',
+        category: '鲜粮食材', note: '富含膳食纤维和β-胡萝卜素，护肠胃、助消化。去籽去皮后喂食。',
+        warning: '✅ 安全食材，适合所有犬猫。南瓜籽和皮需去除后再喂。',
+        platforms: [
+          { name: '盒马', icon: '盒', color: '#1677FF', price: '¥4.5', tag: '30分钟达', tagColor: '#E8F4FD' },
+          { name: '永辉生活', icon: '永', color: '#E55C1F', price: '¥5.2', tag: '今日达', tagColor: '#FFF3E8' },
+          { name: '叮咚买菜', icon: '叮', color: '#00C9A7', price: '¥4.8', tag: '29分钟', tagColor: '#E8FAF4' }
+        ]
+      },
+      {
+        id: 3, name: '有机糙米', qty: '200g', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=120&h=120&fit=crop',
+        category: '主食谷物', note: '碳水供能，糙米比白米纤维更高，适合需要控制体重的宠物。',
+        warning: '✅ 安全食材。米粒煮至软烂后喂食，生米不可直接喂。',
+        platforms: [
+          { name: '淘宝', icon: '淘', color: '#FF5000', price: '¥15/2.5kg', tag: '2-3天', tagColor: '#FFF0E8' },
+          { name: '京东', icon: '京', color: '#C91623', price: '¥18/2.5kg', tag: '次日达', tagColor: '#FEF0F0' },
+          { name: '永辉生活', icon: '永', color: '#E55C1F', price: '¥2.8/200g', tag: '今日达', tagColor: '#FFF3E8' }
+        ]
+      },
+      {
+        id: 4, name: '宠物专用蛋壳粉', qty: '10g', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b4f1?w=120&h=120&fit=crop',
+        category: '营养补剂', note: '天然钙来源，自制鲜粮必须添加。每100g肉需配约1g蛋壳粉以平衡钙磷比。',
+        warning: '⚠️ 自制鲜粮长期食用必须补钙，否则会导致钙磷比失衡。不可用人类钙片替代。',
+        platforms: [
+          { name: '淘宝', icon: '淘', color: '#FF5000', price: '¥22/100g', tag: '2-3天', tagColor: '#FFF0E8' },
+          { name: '京东宠物', icon: '京', color: '#C91623', price: '¥26/100g', tag: '次日达', tagColor: '#FEF0F0' }
+        ]
+      }
+    ];
+
+    function renderCart() {
+      const container = document.getElementById('cart-items');
+      const empty = document.getElementById('cart-empty');
+      const count = document.getElementById('cart-count');
+      const fpCount = document.getElementById('fp-cart-count');
+
+      const total = cartItems.length;
+      count.textContent = total + '件';
+      if (fpCount) fpCount.textContent = total + '件食材';
+
+      if (total === 0) {
+        empty.style.display = 'block';
+        container.innerHTML = '';
+        return;
+      }
+      empty.style.display = 'none';
+
+      container.innerHTML = cartItems.map((item, idx) => `
+        <div class="cart-item-card" id="cart-item-${item.id}" onclick="toggleCartItem(this)">
+          <div class="cart-item-row">
+            <img src="${item.img}" class="cart-item-img" onerror="this.style.display='none'">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-meta">${item.qty} · ${item.category}</div>
+            </div>
+            <div class="cart-item-price">
+              <div class="price-main">${item.platforms[0].price}</div>
+              <div class="price-sub">${item.platforms[0].name}最优</div>
+            </div>
+            <i data-lucide="chevron-down" class="cart-expand-icon w-4 h-4 text-warm-muted"></i>
+          </div>
+          <div class="cart-compare">
+            <h4>📊 多平台比价</h4>
+            <div class="platform-list">
+              ${item.platforms.map(p => `
+                <div class="platform-row" onclick="event.stopPropagation();goToPlatform('${p.name}','${item.name}')">
+                  <div class="platform-icon" style="background:${p.color}20;color:${p.color}">${p.icon}</div>
+                  <div class="platform-name">${p.name}</div>
+                  <div class="platform-price">${p.price}</div>
+                  <span class="platform-tag" style="background:${p.tagColor}">${p.tag}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div class="cart-ai-note">
+              <div class="note-title">🤖 AI购买建议</div>
+              <div class="note-text">${item.note}</div>
+            </div>
+            <div class="cart-warning">
+              <div class="warn-text">${item.warning}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function openCart() {
+      renderCart();
+      document.getElementById('cart-overlay').classList.add('show');
+    }
+    function closeCart() {
+      document.getElementById('cart-overlay').classList.remove('show');
+    }
+    function toggleCartItem(card) {
+      card.classList.toggle('expanded');
+      lucide.createIcons();
+    }
+    function goToPlatform(platform, itemName) {
+      const maps = {
+        '盒马': 'https://m.hemashop.cn/search?q=',
+        '永辉生活': 'https://weixin.yonghui.cn/search?keyword=',
+        '美团闪购': 'https://i.meituan.com/awp/h5/shopping/search?keyword=',
+        '叮咚买菜': 'https://m.ddxq.mobi/search?keyword=',
+        '淘宝': 'https://s.taobao.com/search?q=',
+        '京东': 'https://search.jd.com/Search?keyword=',
+        '京东宠物': 'https://search.jd.com/Search?keyword='
+      };
+      const url = maps[platform] || 'https://s.taobao.com/search?q=';
+      showToast('正在跳转到' + platform + '搜索：' + itemName);
+      window.open(url + encodeURIComponent('宠物 ' + itemName), '_blank');
+    }
+
+    // AI一键加入购物车 → 加载商品的演示数据，然后打开购物车
     function aiAddToCart(btn) {
       btn.classList.add('added');
       btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> 已加入购物车';
       lucide.createIcons();
-
-      showToast('AI 正在识别附近可配送商品，已自动加入购物车');
-
       setTimeout(() => {
         btn.classList.remove('added');
         btn.innerHTML = '<i data-lucide="sparkles" class="w-4 h-4"></i> AI一键加入购物车';
         lucide.createIcons();
-      }, 2500);
-    }
+      }, 2000);
+
+      // Add sample items to cart if empty
+      if (cartItems.length === 0) {
+        cartItems = JSON.parse(JSON.stringify(demoSampleItems));
+      }
+      setTimeout(() => openCart(), 600);
+    };
 
     function showToast(message) {
       const toast = document.getElementById('toast');
@@ -2381,6 +2665,7 @@
     }
   </script>
   <script src="chat.js"></script>
-  <div id="toast" class="toast"></div>
+
+<div id="toast" class="toast"></div>
 </body>
 </html>

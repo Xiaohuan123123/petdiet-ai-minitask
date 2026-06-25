@@ -1,0 +1,13 @@
+# API keys - DO NOT commit
+demo/.env
+.env
+
+# Temp converter scripts
+demo/convert_*.py
+
+# Generated Word docs
+*.docx
+
+# Python cache
+__pycache__/
+*.pyc
