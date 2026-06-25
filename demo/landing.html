@@ -362,23 +362,25 @@
   </div>
 </section>
 
-<!-- ===== CTA ===== -->
-<section class="py-20 px-6 bg-gradient-to-b from-brand-50/50 to-brand-100/30">
-  <div class="max-w-3xl mx-auto text-center">
-    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-brand-800 mb-4">准备好给毛孩子更好的每一餐了吗？</h2>
-    <p class="text-brand-600/70 text-lg mb-8">免费试用，无需下载。AI 专属食谱，多平台比价，一键购买。</p>
+<!-- ===== CTA with footer background ===== -->
+<section class="relative py-24 px-6 overflow-hidden">
+  <!-- 背景底图 -->
+  <div class="absolute inset-0 z-0">
+    <img src="footer-bg.jpeg" alt="" class="w-full h-full object-cover">
+    <!-- 上方渐变：从白色过渡到底图 -->
+    <div class="absolute top-0 left-0 right-0 h-48" style="background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.8) 40%, rgba(255,253,245,0.3) 80%, transparent 100%);"></div>
+    <!-- 下方渐变：底图底部加深，让文字更可读 -->
+    <div class="absolute bottom-0 left-0 right-0 h-32" style="background: linear-gradient(0deg, rgba(255,255,255,0.7) 0%, transparent 100%);"></div>
+  </div>
+
+  <div class="max-w-3xl mx-auto text-center relative z-10">
+    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-brand-800 mb-4" style="text-shadow: 0 2px 8px rgba(255,255,255,0.8);">准备好给毛孩子更好的每一餐了吗？</h2>
+    <p class="text-brand-700 text-lg mb-8" style="text-shadow: 0 1px 4px rgba(255,255,255,0.9);">免费试用，无需下载。AI 专属食谱，多平台比价，一键购买。</p>
     <a href="/" class="clay-btn text-lg px-10 py-4">
       立即免费体验
       <i data-lucide="arrow-right" class="w-5 h-5"></i>
     </a>
     <p class="text-sm text-brand-500 mt-6">建议用手机打开获得最佳体验</p>
-  </div>
-</section>
-
-<!-- ===== FOOTER BANNER ===== -->
-<section class="relative overflow-hidden" style="background: linear-gradient(180deg, #FFFDF5 0%, #FFF8E1 30%, transparent 100%);">
-  <div class="max-w-5xl mx-auto relative z-10 pt-8 pb-4">
-    <img src="footer-bg.jpeg" alt="" class="w-full rounded-3xl" style="box-shadow: 0 8px 40px rgba(180,83,9,0.15);">
   </div>
 </section>
 
